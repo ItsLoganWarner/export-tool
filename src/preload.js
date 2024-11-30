@@ -1,2 +1,7 @@
-// See the Electron documentation for details on how to use preload scripts:
-// https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
+const { contextBridge, ipcRenderer } = require('electron');
+
+contextBridge.exposeInMainWorld('electron', {
+  openDirectory: () => ipcRenderer.invoke('dialog:openDirectory'),
+  readDirectory: (directoryPath) => ipcRenderer.invoke('fs:readDirectory', directoryPath),
+  readFile: (filePath) => ipcRenderer.invoke('fs:readFile', filePath),
+});

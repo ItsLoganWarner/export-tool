@@ -29,11 +29,14 @@
 // src/renderer.jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
+import FileBrowser from './FileBrowser';
+
 
 const App = () => {
   return (
     <div>
-      <h1>Hello, Electron with React!</h1>
+      <h1>Temp UI for Mod Tool</h1>
+      <FileBrowser />
     </div>
   );
 };

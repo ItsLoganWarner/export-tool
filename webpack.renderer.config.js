@@ -24,7 +24,12 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.js', '.jsx'], // Add .jsx to resolved file extensions
+    extensions: ['.js', '.jsx'],
+    fallback: {
+      "path": require.resolve("path-browserify"),
+      "fs": false, // We don't need to polyfill 'fs' in the browser context, it should be handled by the main process
+      "stream": require.resolve("stream-browserify")
+    },
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
