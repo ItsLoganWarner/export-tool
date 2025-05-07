@@ -1,53 +1,63 @@
-// src/components/TabStrip/TabStrip.jsx
-import React from 'react';
+// src/components/Tabs/TabStrip.jsx
+import React, { useState } from 'react';
+import GeneralTab from './tabs/GeneralTab';
+// import AfterFireTab from './AfterFireTab'; // for future tabs
 
 const tabs = ['General', 'AfterFire', 'Forced Induction', 'Fuel', 'ESC', 'Sound Inject'];
 
-const TabStrip = ({ selectedTab, setSelectedTab, isReady }) => {
+const TabStrip = ({ extractedData, onFieldChange }) => {
+  const [selectedTab, setSelectedTab] = useState('General');
+
+  const renderTab = () => {
+    switch (selectedTab) {
+      case 'General':
+        return <GeneralTab extractedData={extractedData} onFieldChange={onFieldChange} />;
+      // case 'AfterFire':
+      //   return <AfterFireTab ... />;
+      default:
+        return <div>Coming soon...</div>;
+    }
+  };
+
   return (
-    <div style={styles.container}>
-      {tabs.map(tab => (
-        <button
-          key={tab}
-          disabled={!isReady}
-          onClick={() => setSelectedTab(tab)}
-          style={{
-            ...styles.button,
-            ...(selectedTab === tab ? styles.active : {}),
-            ...(isReady ? {} : styles.disabled),
-          }}
-        >
-          {tab}
-        </button>
-      ))}
+    <div>
+      <div style={styles.tabStrip}>
+        {tabs.map((tab) => (
+          <button
+            key={tab}
+            style={{
+              ...styles.tabButton,
+              backgroundColor: tab === selectedTab ? '#007F7F' : '#ccc',
+              color: tab === selectedTab ? 'white' : 'black',
+            }}
+            onClick={() => setSelectedTab(tab)}
+          >
+            {tab}
+          </button>
+        ))}
+      </div>
+      <div style={styles.tabContent}>
+        {renderTab()}
+      </div>
     </div>
   );
 };
 
 const styles = {
-  container: {
+  tabStrip: {
     display: 'flex',
-    justifyContent: 'space-around',
-    margin: '1rem 0',
-    borderBottom: '1px solid black',
-    paddingBottom: '0.5rem',
+    borderBottom: '2px solid black',
   },
-  button: {
+  tabButton: {
     padding: '0.5rem 1rem',
-    background: '#2d468c',
-    color: 'white',
-    border: '1px solid black',
+    border: 'none',
     cursor: 'pointer',
     fontWeight: 'bold',
+    flex: 1,
   },
-  active: {
-    background: '#4f5b93',
-    borderBottom: '3px solid white',
+  tabContent: {
+    padding: '1rem',
   },
-  disabled: {
-    opacity: 0.4,
-    cursor: 'not-allowed',
-  }
 };
 
 export default TabStrip;

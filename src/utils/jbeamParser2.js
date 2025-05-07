@@ -1,7 +1,7 @@
 import { getSchemaForPart } from './getSchema.js';
 
 export function parseJbeam2(rawContent) {
-  const partKeyMatch = rawContent.match(/"Camso_Engine_[^"]+"/);
+  const partKeyMatch = rawContent.match(/"camso_engine_[^"]+"/);
   if (!partKeyMatch) {
     console.warn('Unable to determine part type');
     return null;

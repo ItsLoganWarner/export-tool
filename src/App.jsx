@@ -2,33 +2,35 @@
 import React, { useState } from 'react';
 import Header from './components/Header/Header';
 import TabStrip from './components/TabStrip/TabStrip';
-import Footer from './components/Footer/Footer';
-import GeneralTab from './components/TabStrip/tabs/GeneralTab'; // example
-// import other tabs as needed
 
 const App = () => {
-  const [isReady, setIsReady] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('General');
-  const [vehicleData, setVehicleData] = useState(null); // parsed export data
+  const [vehicleData, setVehicleData] = useState(null);       // Full vehicle object
+  const [isReady, setIsReady] = useState(false);              // Flag for UI display
+  const [pendingChanges, setPendingChanges] = useState({});   // Editable user changes
 
-  const renderTab = () => {
-    switch (selectedTab) {
-      case 'General': return <GeneralTab data={vehicleData} isReady={isReady} />;
-      // Add other tabs here
-      default: return null;
-    }
+  const handleFieldChange = (key, value) => {
+    setPendingChanges(prev => ({
+      ...prev,
+      [key]: value
+    }));
+    console.log("✏️ Pending field change:", key, value);
   };
 
   return (
-    <div className="app-wrapper">
+    <div>
       <Header
         isReady={isReady}
         setIsReady={setIsReady}
         setVehicleData={setVehicleData}
+        vehicleData={vehicleData}
       />
-      <TabStrip selectedTab={selectedTab} setSelectedTab={setSelectedTab} isReady={isReady} />
-      {renderTab()}
-      <Footer isReady={isReady} />
+
+      {isReady && vehicleData && (
+        <TabStrip
+          extractedData={vehicleData.jbeamFiles.engine.extracted}
+          onFieldChange={handleFieldChange}
+        />
+      )}
     </div>
   );
 };
