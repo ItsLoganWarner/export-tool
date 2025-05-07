@@ -1,6 +1,6 @@
 // components/JbeamReader.jsx
 import React from 'react';
-import { cleanJbeamJson } from '../utils/cleanJbeamJson';
+import { cleanJbeamJson } from '../../utils/old/cleanJbeamJson';
 
 const JbeamReader = ({ filePath, onRead }) => {
   const readJbeamFile = async () => {

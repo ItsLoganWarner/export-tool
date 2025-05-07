@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { parseJbeam } from './utils/jbeamParser'; // Import the custom parser
+import { parseJbeam } from './utils/old/jbeamParser'; // Import the custom parser
+import { parseJbeam2 } from './utils/jbeamParser2';
 
 const FileBrowser = () => {
   const [selectedPath, setSelectedPath] = useState('');
@@ -61,7 +62,7 @@ const FileBrowser = () => {
             const engineDataRaw = await window.electron.readFile(engineFilePath);
             console.log("Raw JBeam Data:", engineDataRaw); // Log the raw data for debugging
 
-            const engineData = parseJbeam(engineDataRaw);
+            const engineData = parseJbeam2(engineDataRaw);
             console.log("Parsed JBeam Data:", engineData); // Log the parsed data for better insight
 
             // Accessing parsed data properly based on the new structure
