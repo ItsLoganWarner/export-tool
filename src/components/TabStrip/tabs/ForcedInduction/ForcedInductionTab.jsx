@@ -62,16 +62,22 @@ const ForcedInductionTab = ({ extractedData, onFieldChange, pendingChanges }) =>
   };
 
   const changeField = (key, raw) => {
-    let val = raw;
-    if (fields[key].type === 'number') {
+    const def = fields[key];
+    let val;
+    if (def.type === 'number') {
       const n = parseFloat(raw);
       val = isNaN(n) ? 0 : n;
+    } else if (def.type === 'boolean') {
+      val = (raw === 'true');
+    } else {
+      val = raw;
     }
+  
     setValues(prev => ({ ...prev, [key]: val }));
-
     if (checked[key]) {
-      onFieldChange(key, 
-        fields[key].type === 'dropdown'
+      onFieldChange(
+        key,
+        def.type === 'dropdown'
           ? prefix + val
           : val
       );
@@ -101,6 +107,17 @@ const ForcedInductionTab = ({ extractedData, onFieldChange, pendingChanges }) =>
               {(forcedInductionSounds[soundKey][def.category] || []).map(opt => (
                 <option key={opt} value={opt}>{opt}</option>
               ))}
+            </select>
+          ) : def.type === 'boolean' ? (
+            <select
+              disabled={!checked[key]}
+              // display "true"/"false" based on the boolean
+              value={values[key] ? 'true' : 'false'}
+              onChange={e => changeField(key, e.target.value)}
+              style={{ marginLeft: 10 }}
+            >
+              <option value="true">true</option>
+              <option value="false">false</option>
             </select>
           ) : (
             <input

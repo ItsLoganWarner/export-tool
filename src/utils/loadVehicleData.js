@@ -26,6 +26,7 @@ export async function loadVehicleData(directoryPath) {
     directoryPath,
     modelName: modelInfo.Name,
     engineFileName: engineFile,
+    engineFilePath, // Expose the full file path
     jbeamFiles: {
       engine: {
         fileName: engineFile,
