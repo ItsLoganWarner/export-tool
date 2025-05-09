@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import Header from './components/Header/Header';
 import TabStrip from './components/TabStrip/TabStrip';
+import Footer from './components/Footer/Footer';
 
 const App = () => {
   const [vehicleData, setVehicleData] = useState(null);       // Full vehicle object
@@ -16,6 +17,10 @@ const App = () => {
     console.log("✏️ Pending field change:", key, value);
   };
 
+  const handleApplyChanges = () => {
+    console.log("🛠️ Applied Changes:", pendingChanges);
+  };
+
   return (
     <div>
       <Header
@@ -26,10 +31,14 @@ const App = () => {
       />
 
       {isReady && vehicleData && (
-        <TabStrip
-          extractedData={vehicleData.jbeamFiles.engine.extracted}
-          onFieldChange={handleFieldChange}
-        />
+        <>
+          <TabStrip
+            extractedData={vehicleData.jbeamFiles.engine.extracted}
+            onFieldChange={handleFieldChange}
+            pendingChanges= {pendingChanges}
+          />
+          <Footer onApplyChanges={handleApplyChanges} />
+        </>
       )}
     </div>
   );

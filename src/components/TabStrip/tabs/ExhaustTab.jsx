@@ -1,18 +1,18 @@
-// src/components/Tabs/tabs/GeneralTab.jsx
+// src/components/Tabs/tabs/ExhaustTab.jsx
 import React, { useState, useEffect } from 'react';
-import generalSchema from '../../../schemas/engine/general.schema';
+import exhaustSchema from '../../../schemas/engine/exhaust.schema';
 
-const GeneralTab = ({ extractedData, onFieldChange, pendingChanges }) => {
+const ExhaustTab = ({ extractedData, onFieldChange, pendingChanges }) => {
   const [checked, setChecked] = useState({});
   const [values,  setValues]  = useState({});
 
-  // Re-init whenever extractedData or pendingChanges changes
+  // 1) Re-init from extractedData & pendingChanges
   useEffect(() => {
     if (!extractedData) return;
     const initChecked = {};
     const initValues  = {};
 
-    for (const [key, def] of Object.entries(generalSchema.fields)) {
+    for (const [key, def] of Object.entries(exhaustSchema.fields)) {
       const hasChange = pendingChanges.hasOwnProperty(key);
       initChecked[key] = hasChange;
       initValues[key]  = hasChange
@@ -24,41 +24,45 @@ const GeneralTab = ({ extractedData, onFieldChange, pendingChanges }) => {
     setValues(initValues);
   }, [extractedData, pendingChanges]);
 
+  // 2) Checkbox toggle
   const handleCheckboxChange = (key) => {
     const now = !checked[key];
     setChecked(prev => ({ ...prev, [key]: now }));
 
     if (now) {
-      // checked → emit current value
+      // checked → send current value
       onFieldChange(key, values[key]);
     } else {
-      // unchecked → revert + clear
-      const original = extractedData[key] ?? generalSchema.fields[key].default;
+      // unchecked → revert to original + clear
+      const original = extractedData[key] ?? exhaustSchema.fields[key].default;
       setValues(prev => ({ ...prev, [key]: original }));
       onFieldChange(key, null);
     }
   };
 
-  const handleValueChange = (key, raw) => {
+  // 3) Value edits
+  const handleFieldChange = (key, raw) => {
+    const def = exhaustSchema.fields[key];
     let val = raw;
-    const type = generalSchema.fields[key].type;
 
-    if (type === 'number') {
+    if (def.type === 'number') {
       const n = parseFloat(raw);
       val = isNaN(n) ? 0 : n;
-    } else if (type === 'boolean') {
+    } else if (def.type === 'boolean') {
       val = raw === 'true';
     }
 
     setValues(prev => ({ ...prev, [key]: val }));
+
     if (checked[key]) {
       onFieldChange(key, val);
     }
   };
 
+  // 4) Render
   return (
     <div>
-      {Object.entries(generalSchema.fields).map(([key, { type, tip }]) => (
+      {Object.entries(exhaustSchema.fields).map(([key, { type, tip }]) => (
         <div key={key} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
           <input
             type="checkbox"
@@ -67,19 +71,20 @@ const GeneralTab = ({ extractedData, onFieldChange, pendingChanges }) => {
             style={{ marginRight: 8 }}
           />
           <label title={tip} style={{ width: 200, fontWeight: 'bold' }}>{key}</label>
+
           {type === 'number' ? (
             <input
               type="number"
               disabled={!checked[key]}
               value={values[key]}
-              onChange={e => handleValueChange(key, e.target.value)}
+              onChange={e => handleFieldChange(key, e.target.value)}
               style={{ width: 100, marginLeft: 10 }}
             />
           ) : type === 'boolean' ? (
             <select
               disabled={!checked[key]}
               value={values[key] ? 'true' : 'false'}
-              onChange={e => handleValueChange(key, e.target.value)}
+              onChange={e => handleFieldChange(key, e.target.value)}
               style={{ marginLeft: 10 }}
             >
               <option value="true">true</option>
@@ -90,7 +95,7 @@ const GeneralTab = ({ extractedData, onFieldChange, pendingChanges }) => {
               type="text"
               disabled={!checked[key]}
               value={values[key]}
-              onChange={e => handleValueChange(key, e.target.value)}
+              onChange={e => handleFieldChange(key, e.target.value)}
               style={{ width: 200, marginLeft: 10 }}
             />
           )}
@@ -100,4 +105,4 @@ const GeneralTab = ({ extractedData, onFieldChange, pendingChanges }) => {
   );
 };
 
-export default GeneralTab;
+export default ExhaustTab;

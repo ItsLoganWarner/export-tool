@@ -48,27 +48,6 @@ export default {
       tip: 'Constant friction torque (Nm)',
       default: 0,
       insertUnder: 'mainEngine'
-    },
-    starterMaxRPM: {
-      regex: /"starterMaxRPM"\s*:\s*([0-9.]+)/,
-      type: 'number',
-      tip: '',
-      default: 0,
-      insertUnder: 'mainEngine'
-    },
-    starterTorque: {
-      regex: /"starterTorque"\s*:\s*([0-9.]+)/,
-      type: 'number',
-      tip: '',
-      default: 0,
-      insertUnder: 'mainEngine'
-    },
-    radiatorEffectiveness: {
-      regex: /"radiatorEffectiveness"\s*:\s*([0-9.]+)/,
-      type: 'number',
-      tip: '',
-      default: 0,
-      insertUnder: 'mainEngine'
     }
   }
 };

@@ -17,7 +17,7 @@ const Header = ({ isReady, setIsReady, setVehicleData, vehicleData }) => {
   return (
     <div className="header" style={styles.header}>
       <div style={styles.left}>
-        <button onClick={handleSelectDirectory} style={styles.button}>Select Export Directory</button>
+        <button onClick={handleSelectDirectory} style={styles.button}>Select Car Export</button>
       </div>
       <div style={styles.center}>
         {isReady ? (
@@ -30,7 +30,7 @@ const Header = ({ isReady, setIsReady, setVehicleData, vehicleData }) => {
         )}
       </div>
       <div style={styles.right}>
-        <button style={styles.button}>Load Quick Config</button>
+        <button style={styles.button}>Load Preset</button>
       </div>
     </div>
   );

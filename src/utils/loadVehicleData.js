@@ -1,5 +1,4 @@
 import { parseJbeam2 } from './jbeamParser2';
-import camsoEngineSchema from '../schemas/camso_engine.schema';
 
 export async function loadVehicleData(directoryPath) {
   const vehiclesPath = `${directoryPath}/vehicles`;
@@ -8,7 +7,6 @@ export async function loadVehicleData(directoryPath) {
 
   const vehicleFolder = folders[0];
   const vehiclePath = `${vehiclesPath}/${vehicleFolder}`;
-
   const modelInfoRaw = await window.electron.readFile(`${vehiclePath}/info.json`);
   const modelInfo = JSON.parse(modelInfoRaw);
 
@@ -22,19 +20,7 @@ export async function loadVehicleData(directoryPath) {
   const engineRaw = await window.electron.readFile(engineFilePath);
 
   const parsed = parseJbeam2(engineRaw);
-
-  const extracted = {};
-  for (const [key, { regex, type, default: def }] of Object.entries(camsoEngineSchema.fields)) {
-    const match = engineRaw.match(regex);
-    if (match) {
-      let value = match[1];
-      if (type === 'boolean') value = value === 'true';
-      if (type === 'number') value = parseFloat(value);
-      extracted[key] = value;
-    } else {
-      extracted[key] = def;
-    }
-  }
+  if (!parsed) return null;
 
   return {
     directoryPath,
@@ -45,7 +31,7 @@ export async function loadVehicleData(directoryPath) {
         fileName: engineFile,
         raw: engineRaw,
         parsed,
-        extracted
+        extracted: parsed.extracted
       }
     }
   };

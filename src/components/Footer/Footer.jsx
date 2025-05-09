@@ -1,12 +1,12 @@
 // src/components/Footer/Footer.jsx
 import React from 'react';
 
-const Footer = ({ isReady }) => {
+const Footer = ({ isReady, onApplyChanges }) => {
   return (
     <div style={styles.container}>
       <div style={styles.right}>
-        <button disabled={!isReady} style={styles.button}>Apply Changes</button>
-        <button disabled={!isReady} style={styles.button}>Save Config</button>
+        <button style={styles.button} onClick={onApplyChanges}>Apply Changes</button>
+        <button style={styles.button}>Save Preset</button>
       </div>
     </div>
   );
