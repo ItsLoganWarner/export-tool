@@ -13,5 +13,5 @@ contextBridge.exposeInMainWorld('presets', {
   load:       (which,name) => ipcRenderer.invoke('presets:load', which, name),
   save:       (data)       => ipcRenderer.invoke('presets:save', data),
   openFolder: () => ipcRenderer.invoke('presets:openFolder'),
-  pick: () => ipcRenderer.invoke('presets:pick')
+  pick:       (which)        => ipcRenderer.invoke('presets:pick', which),
 });

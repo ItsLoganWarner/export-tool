@@ -57,7 +57,7 @@ const GeneralTab = ({ extractedData, onFieldChange, pendingChanges = {}}) => {
   };
 
   return (
-    <div>
+    <div className="card">
       {Object.entries(generalSchema.fields).map(([key, { type, tip }]) => (
         <div key={key} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
           <input

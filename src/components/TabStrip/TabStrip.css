@@ -1,0 +1,133 @@
+:root {
+    --primary: #16588E;
+    --primary-light: #e64a57;
+    --bg: #f2f6fa;
+    --sidebar-bg: #fff;
+    --sidebar-border: #ddd;
+    --text: #333;
+    --text-light: #777;
+  }
+  
+  .app-container {
+    display: flex;
+    height: calc(100vh - 120px); /* adjust for header/footer */
+    background: var(--bg);
+  }
+  
+  /* ---- the vertical icon bar ---- */
+  .sidebar {
+    width: 60px;
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--sidebar-border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 1rem;
+  }
+  
+  /* ---- 60×48px icon buttons ---- */
+  .sidebar-tab {
+    position: relative;    /* for the absolute label */
+    width: 60px;
+    height: 48px;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    font-size: 1.25rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+    overflow: visible;     /* allow label to peek out */
+  }
+  
+  /* hover icon-only */
+  .sidebar-tab:hover {
+    background: var(--primary-light);
+    color: #fff;
+  }
+  
+  /* selected icon-only */
+  .sidebar-tab.active {
+    background: var(--primary);
+    color: #fff;
+  }
+  
+  /* ---- the hidden label, positioned right of the bar ---- */
+  .sidebar-tab .sidebar-label {
+    position: absolute;
+    left: 60px;            /* immediately to the right of the 60px bar */
+    top: 0;
+    height: 48px;          /* match the button */
+    line-height: 48px;     /* vertically center text */
+    padding: 0 12px;
+    white-space: nowrap;
+    border-radius: 0 4px 4px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    pointer-events: none;  /* don’t block clicks on the icon */
+    opacity: 0;
+    transform: translateX(-10px);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      background 0.2s ease,
+      color 0.2s ease;
+    z-index: 10;
+  }
+  
+  /* 1) show label on hover */
+  .sidebar-tab:hover .sidebar-label {
+    opacity: 1;
+    transform: translateX(0);
+    background: var(--primary-light);
+    color: #fff;
+  }
+  
+  /* 2) hide label on active-but-not-hover */
+  .sidebar-tab.active .sidebar-label {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  
+  /* 3) show label on active+hover */
+  .sidebar-tab.active:hover .sidebar-label {
+    opacity: 1;
+    transform: translateX(0);
+    background: var(--primary);
+    color: #fff;
+  }
+  
+  .content {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+  }
+  
+  /* Optional card wrapper for each panel */
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* Inputs styling */
+  input[type="number"],
+  select {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0.3rem 0.5rem;
+    transition: border-color 0.2s;
+  }
+  input[type="number"]:focus,
+  select:focus {
+    outline: none;
+    border-color: var(--primary);
+  }
+  input[type="checkbox"] {
+    transform: scale(1.2);
+    margin-right: 0.5rem;
+  }
+  

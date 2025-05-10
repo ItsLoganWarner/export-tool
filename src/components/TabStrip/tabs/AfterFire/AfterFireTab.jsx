@@ -1,112 +1,125 @@
-// src/components/Tabs/tabs/AfterFireTab.jsx
 import React, { useState, useEffect } from 'react';
+import afterfireSchema from '../../../../schemas/engine/afterfire.schema';
 import { afterfireSounds } from './afterfireOptions';
 
-const schema = {
-  prefix: "event:>Vehicle>Afterfire>",
-  fields: {
-    instantAfterFireVolumeCoef:   { type: "number",   default: 0.6,    tip: "" },
-    sustainedAfterFireVolumeCoef: { type: "number",   default: 0.55,   tip: "" },
-    shiftAfterFireVolumeCoef:     { type: "number",   default: 0.8,    tip: "" },
-    instantAfterFireSound:        { type: "dropdown", default: "Default", category: "single", tip: "" },
-    sustainedAfterFireSound:      { type: "dropdown", default: "Default", category: "multi",  tip: "" },
-    shiftAfterFireSound:          { type: "dropdown", default: "Default", category: "shift",  tip: "" },
-  }
-};
-
-const AfterFireTab = ({ extractedData, onFieldChange, pendingChanges= {} }) => {
+export default function AfterFireTab({
+  rawContent,
+  extractedData,
+  pendingChanges = {},
+  onFieldChange
+}) {
+  const { prefix, fields } = afterfireSchema;
   const [checked, setChecked] = useState({});
-  const [values,  setValues]  = useState({});
+  const [values, setValues] = useState({});
 
-  // 1) Init from extractedData & pendingChanges
+  // 1) Re-init whenever the file or your pendingChanges change
   useEffect(() => {
     const initChecked = {};
-    const initValues  = {};
+    const initValues = {};
 
-    for (const [key, def] of Object.entries(schema.fields)) {
+    Object.entries(fields).forEach(([key, def]) => {
       const hasChange = pendingChanges.hasOwnProperty(key);
       initChecked[key] = hasChange;
 
-      let raw = hasChange
+      // prefer pending → extracted (which includes def.default if canBeMissing) → schema default
+      let rawVal = hasChange
         ? pendingChanges[key]
-        : (extractedData?.[key] ?? def.default);
+        : (extractedData[key] != null ? extractedData[key] : def.default);
 
-      // strip off prefix for dropdown display
-      if (def.type === 'dropdown' && typeof raw === 'string' && raw.startsWith(schema.prefix)) {
-        raw = raw.slice(schema.prefix.length);
+      // strip prefix for dropdown display
+      if (
+        def.type === 'dropdown' &&
+        typeof rawVal === 'string' &&
+        rawVal.startsWith(prefix)
+      ) {
+        rawVal = rawVal.slice(prefix.length);
       }
-      initValues[key] = raw;
-    }
+      initValues[key] = rawVal;
+    });
 
     setChecked(initChecked);
     setValues(initValues);
-  }, [extractedData, pendingChanges]);
+  }, [extractedData, pendingChanges, prefix, fields]);
 
-  // 2) Checkbox toggle
+  // 2) Toggling a checkbox
   const handleCheckboxChange = (key) => {
+    const def = fields[key];
     const now = !checked[key];
     setChecked(prev => ({ ...prev, [key]: now }));
 
-    if (now) {
-      // check → send value (only prefix if dropdown)
-      const def = schema.fields[key];
-      const send = def.type === 'dropdown'
-        ? schema.prefix + values[key]
-        : values[key];
-      onFieldChange(key, send);
-    } else {
-      // uncheck → revert + clear
-      const def = schema.fields[key];
-      let orig = extractedData?.[key] ?? def.default;
-      if (def.type === 'dropdown' && typeof orig === 'string' && orig.startsWith(schema.prefix)) {
-        orig = orig.slice(schema.prefix.length);
-      }
-      setValues(prev => ({ ...prev, [key]: orig }));
+    if (!now) {
+      // uncheck → clear pending, reset display
+      const original = extractedData[key] != null
+        ? extractedData[key]
+        : def.default;
+      const display = (def.type === 'dropdown' && typeof original === 'string' && original.startsWith(prefix))
+        ? original.slice(prefix.length)
+        : original;
+      setValues(v => ({ ...v, [key]: display }));
       onFieldChange(key, null);
+      return;
+    }
+
+    // now === checked on
+    // only emit if it's not the literal Default
+    if (!(def.type === 'dropdown' && values[key] === def.default)) {
+      const toSend = def.type === 'dropdown'
+        ? prefix + values[key]
+        : values[key];
+      onFieldChange(key, toSend);
     }
   };
 
-  // 3) Value edits
+  // 3) Changing a field
   const handleFieldChange = (key, raw) => {
-    const def = schema.fields[key];
+    const def = fields[key];
     let val = raw;
 
     if (def.type === 'number') {
       const n = parseFloat(raw);
-      val = isNaN(n) ? 0 : n;
+      val = isNaN(n) ? def.default : n;
+    }
+
+    // if they pick “Default” from the dropdown, we treat that as clearing
+    if (def.type === 'dropdown' && val === def.default) {
+      // we clear any previous pending, but leave the box checked so they can re-pick
+      onFieldChange(key, null);
+      setValues(v => ({ ...v, [key]: val }));
+      return;
     }
 
     setValues(prev => ({ ...prev, [key]: val }));
+
     if (checked[key]) {
-      const send = def.type === 'dropdown'
-        ? schema.prefix + val
+      const toSend = def.type === 'dropdown'
+        ? prefix + val
         : val;
-      onFieldChange(key, send);
+      onFieldChange(key, toSend);
     }
   };
 
   // 4) Render
   return (
-    <div>
-      {Object.entries(schema.fields).map(([key, def]) => (
-        <div key={key} style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+    <div className="card">
+      {Object.entries(fields).map(([key, def]) => (
+        <div key={key} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
           <input
             type="checkbox"
             checked={checked[key] || false}
             onChange={() => handleCheckboxChange(key)}
             style={{ marginRight: 8 }}
           />
-          <label title={def.tip} style={{ width: 220 }}>{key}</label>
+          <label title={def.tip} style={{ width: 220, fontWeight: 'bold' }}>{key}</label>
 
           {def.type === 'dropdown' ? (
             <select
               disabled={!checked[key]}
               value={values[key] ?? ''}
               onChange={e => handleFieldChange(key, e.target.value)}
-              style={{ marginLeft: 10 }}
+              style={{ marginLeft: 10, width: 220, }}
             >
-              <option value="Default">Default</option>
-              {(afterfireSounds[def.category]||[]).map(opt => (
+              <option value={def.default}>{def.default}</option>
+              {(afterfireSounds[def.category] || []).map(opt => (
                 <option key={opt} value={opt}>{opt}</option>
               ))}
             </select>
@@ -124,6 +137,4 @@ const AfterFireTab = ({ extractedData, onFieldChange, pendingChanges= {} }) => {
       ))}
     </div>
   );
-};
-
-export default AfterFireTab;
+}

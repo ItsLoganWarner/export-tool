@@ -61,7 +61,7 @@ const ExhaustTab = ({ extractedData, onFieldChange, pendingChanges= {} }) => {
 
   // 4) Render
   return (
-    <div>
+    <div className="card">
       {Object.entries(exhaustSchema.fields).map(([key, { type, tip }]) => (
         <div key={key} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
           <input

@@ -10,8 +10,12 @@ if (require('electron-squirrel-startup')) {
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1050,
+    height: 700,
+    minWidth: 800,
+    minHeight: 620,
+    useContentSize: true,
+    autoHideMenuBar: true,
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       contextIsolation: true,
@@ -72,19 +76,15 @@ app.whenReady().then(() => {
   });
 
   //
-  // PRESETS FOLDERS (make user folder writable)
+  // PRESETS FOLDERS
   //
   const isDev = !app.isPackaged;
   const builtInPresetsDir = isDev
   ? path.join(process.cwd(), 'src', 'resources', 'presets')
-  : path.join(process.resourcesPath, 'presets');
-
-  // 2) User folder always under appData
+    : path.join(process.resourcesPath, 'presets');
   const userPresetsDir = path.join(app.getPath('userData'), 'presets');
-
-  // 3) Ensure both exist
   fs.mkdirSync(builtInPresetsDir, { recursive: true });
-  fs.mkdirSync(userPresetsDir,    { recursive: true });
+  fs.mkdirSync(userPresetsDir, { recursive: true });
 
   // List all .json in both dirs
   ipcMain.handle('presets:list', async () => {
@@ -105,14 +105,12 @@ app.whenReady().then(() => {
 
   // Save user preset
   ipcMain.handle('presets:save', async (_evt, data) => {
-    // 1) Ask the user where (and under what name) to save:
     const { canceled, filePath } = await dialog.showSaveDialog({
       title: 'Save your preset',
       defaultPath: path.join(userPresetsDir, 'my-preset.json'),
       filters: [{ name: 'JSON', extensions: ['json'] }]
     });
     if (canceled || !filePath) return null;
-    // 2) Write the file:
     await fs.promises.writeFile(filePath, JSON.stringify(data, null, 2), 'utf-8');
     return path.basename(filePath);
   });
@@ -122,17 +120,23 @@ app.whenReady().then(() => {
     shell.openPath(userPresetsDir);
   });
 
-    // Let the user pick a .json file from either folder, read & parse it
-  ipcMain.handle('presets:pick', async () => {
-    // allow browsing both built-ins and custom
-    const defaultPath = builtInPresetsDir; // or userPresetsDir
+  // Replace the old pick handler
+  ipcMain.handle('presets:pick', async (_evt, which) => {
+    const defaultPath = which === 'custom'
+      ? userPresetsDir
+      : builtInPresetsDir;
+    const title = which === 'custom'
+      ? 'Select a User Preset'
+      : 'Select a Built-In Preset';
+
     const { canceled, filePaths } = await dialog.showOpenDialog({
-      title: 'Select a preset to load',
+      title,
       defaultPath,
       filters: [{ name: 'JSON Preset', extensions: ['json'] }],
       properties: ['openFile']
     });
     if (canceled || filePaths.length === 0) return null;
+
     const raw = await fs.promises.readFile(filePaths[0], 'utf-8');
     return JSON.parse(raw);
   });

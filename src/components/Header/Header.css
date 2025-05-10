@@ -1,0 +1,148 @@
+.app-header {
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    min-height: 3.5rem;
+    /* or whatever exact height you prefer */
+    box-sizing: border-box;
+    background: linear-gradient(to right, #81C4FF, #16588E, #E7222E);
+    color: white;
+    position: relative;
+    z-index: 20;
+}
+
+.header-left,
+.header-center,
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.header-left {
+    flex: 1;
+}
+
+.header-center {
+    flex: 2;
+    flex-direction: column;
+    text-align: center;
+}
+
+.header-right {
+    flex: 1;
+    justify-content: flex-end;
+    position: relative;
+}
+
+/* ===== Car button ===== */
+.btn {
+    background: none;
+    border: 2px solid white;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn:hover {
+    background: white;
+    color: #16588E;
+}
+
+/* icon only until hover */
+.select-car {
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+    padding-left: 0.4em;
+    padding-right: 0.4em;
+    transition: padding 0.3s ease;
+}
+
+/* hide the text until hover */
+.select-car .label {
+    display: none;
+    margin-left: 0.5em;
+    white-space: nowrap;
+}
+
+/* on hover, expand the padding & show the label */
+.select-car:hover {
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.select-car:hover .label {
+    display: inline-block;
+}
+
+/* center title lines */
+.title-line {
+    line-height: 1.2;
+    margin: 0.1em 0;
+}
+
+/* dimmed state */
+.dimmed {
+    color: #eee;
+    font-style: italic;
+}
+
+/* ===== Presets pill ===== */
+.presets-btn {
+    background: white;
+    color: #16588E;
+    border: none;
+    padding: 0.4em 0.8em;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background 0.2s, color 0.2s;
+}
+
+.presets-btn:hover {
+    background: #16588E;
+    color: white;
+}
+
+/* ===== Dropdown menu ===== */
+.preset-dropdown {
+    position: absolute;
+    top: 110%;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    z-index: 30;
+    min-width: 180px;
+}
+
+.preset-row {
+    display: flex;
+    align-items: center;
+    padding: 0.5em 1em;
+    border-bottom: 1px solid #eee;
+}
+
+.preset-row:last-child {
+    border-bottom: none;
+}
+
+.preset-label {
+    flex: 1;
+    font-weight: bold;
+    color: #333;
+}
+
+.preset-action {
+    margin-left: 0.5em;
+    cursor: pointer;
+    color: #555;
+    transition: color 0.2s;
+}
+
+.preset-action:hover {
+    color: #16588E;
+}

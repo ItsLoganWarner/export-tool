@@ -1,49 +1,32 @@
 // src/components/Footer/Footer.jsx
 import React from 'react';
+import './Footer.css';
 
 const Footer = ({
-    onApplyChanges,
-    onSavePreset,        // new
-    onOpenPresetFolder   // new
-}) => {
-    return (
-        <div style={styles.container}>
-            <div style={styles.right}>
-                <button style={styles.button} onClick={onApplyChanges}>
-                    Apply Changes
-                </button>
-                <button style={styles.button} onClick={onSavePreset}>
-                    Save Preset
-                </button>
-                <button
-                    style={styles.button}
-                    onClick={onOpenPresetFolder}
-                    title="Open Preset Folder"
-                >
-                    📂
-                </button>
-            </div>
-        </div>
-    );
-};
-
-const styles = {
-    container: {
-        marginTop: 'auto',
-        padding: '1rem',
-        display: 'flex',
-        justifyContent: 'flex-end',
-        borderTop: '1px solid #333',
-    },
-    right: {
-        display: 'flex',
-        gap: '1rem',
-    },
-    button: {
-        padding: '0.5rem 1rem',
-        fontWeight: 'bold',
-        cursor: 'pointer',
-    }
-};
+  onApplyChanges,
+  onSavePreset,
+  onOpenPresetFolder
+}) => (
+  <footer className="footer">
+    <div className="footer-credit">
+      Created by Logan Warner&nbsp;(Monster Energy Zero Ultra)
+    </div>
+    <div className="footer-right">
+      <button className="footer-button-apply" onClick={onApplyChanges}>
+        Apply Changes
+      </button>
+      <button className="footer-button" onClick={onSavePreset}>
+        Save Preset
+      </button>
+      <button
+        className="footer-button"
+        onClick={onOpenPresetFolder}
+        title="Open Preset Folder"
+      >
+        📂
+      </button>
+    </div>
+  </footer>
+);
 
 export default Footer;

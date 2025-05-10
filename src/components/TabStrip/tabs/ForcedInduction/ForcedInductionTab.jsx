@@ -7,8 +7,8 @@ import { forcedInductionSounds } from './forcedInductionOptions.js';
 const ForcedInductionTab = ({ extractedData, onFieldChange, pendingChanges= {} }) => {
   const hasTurbo = 'bovSoundFileName' in extractedData;
   const hasSuper = 'twistedLobes' in extractedData;
-  if (!hasTurbo && !hasSuper) return <div>No forced induction detected.</div>;
-  if (hasTurbo && hasSuper) return <div>Twin-Charging not currently supported its too much of a pain in the ass with the current shit ass parsing technique sorry.</div>;
+  if (!hasTurbo && !hasSuper) return <div className="card" style={{fontWeight: 'bold' }}>No forced induction detected.</div>;
+  if (hasTurbo && hasSuper) return <div className="card" style={{fontWeight: 'bold' }}>Twin-Charging not currently supported its too much of a pain in the ass with the current shit ass parsing technique sorry.</div>;
 
   const schema = hasTurbo ? turboSchema : superSchema;
   const label = hasTurbo ? 'Turbocharger' : 'Supercharger';
@@ -85,7 +85,7 @@ const ForcedInductionTab = ({ extractedData, onFieldChange, pendingChanges= {} }
   };
 
   return (
-    <div>
+    <div className="card">
       <h3 style={{ marginTop: 20, borderBottom: '1px solid #333' }}>{label}</h3>
       {Object.entries(fields).map(([key, def]) => (
         <div key={key} style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>

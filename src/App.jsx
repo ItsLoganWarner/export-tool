@@ -5,23 +5,22 @@ import TabStrip from './components/TabStrip/TabStrip';
 import Footer from './components/Footer/Footer';
 
 const App = () => {
-  const [vehicleData,       setVehicleData]       = useState(null);
-  const [isReady,           setIsReady]           = useState(false);
-  const [pendingChanges,    setPendingChanges]    = useState({});
+  const [vehicleData,    setVehicleData]    = useState(null);
+  const [isReady,        setIsReady]        = useState(false);
+  const [pendingChanges, setPendingChanges] = useState({});
 
-  // 1) Field edits (with removal when null)
+  // 1) Field edits (remove key if null/undefined)
   const handleFieldChange = (key, value) => {
     setPendingChanges(prev => {
-      if (value === null || value === undefined) {
+      if (value == null) {
         const { [key]: _, ...rest } = prev;
         return rest;
       }
       return { ...prev, [key]: value };
     });
-    console.log("✏️ Pending field change:", key, value);
   };
 
-  // 2) Apply to disk
+  // 2) Write to disk
   const handleApplyChanges = async () => {
     if (!vehicleData?.engineFilePath) {
       return alert("No engine file loaded!");
@@ -31,64 +30,72 @@ const App = () => {
       pendingChanges
     );
     if (res.success) {
-      alert("✓ Changes applied to disk");
+      alert("✓ Changes applied to car export");
     } else {
       alert("✗ Failed to write file: " + res.message);
     }
   };
 
-  // 3) Load a brand‐new vehicle → clear out all old changes
+  // 3) When you pick a new car export
   const handleNewVehicle = (data) => {
     setVehicleData(data);
     setPendingChanges({});
     setIsReady(true);
   };
 
-  // 4) Load *replace* preset
-  const handleLoadPreset = async () => {
-    const preset = await window.presets.pick();
-    if (preset) {
-      setPendingChanges(preset);
-      console.log('Loaded preset:', preset);
-    }
+  // 4a) Load (replace) a built-in preset
+  const handleLoadBuiltIn = async () => {
+    const preset = await window.presets.pick('builtIn');
+    if (preset) setPendingChanges(preset);
   };
 
-  // 5) Append on top of existing
-  const handleAppendPreset = async () => {
-    const preset = await window.presets.pick();
-    if (preset) {
-      setPendingChanges(prev => ({ ...prev, ...preset }));
-      console.log('Appended preset:', preset);
-    }
+  // 4b) Append (merge) a built-in preset
+  const handleAppendBuiltIn = async () => {
+    const preset = await window.presets.pick('builtIn');
+    if (preset) setPendingChanges(prev => ({ ...prev, ...preset }));
   };
 
-  // 6) Save current pendingChanges as a new custom preset
+  // 5a) Load (replace) a user preset
+  const handleLoadUser = async () => {
+    const preset = await window.presets.pick('custom');
+    if (preset) setPendingChanges(preset);
+  };
+
+  // 5b) Append (merge) a user preset
+  const handleAppendUser = async () => {
+    const preset = await window.presets.pick('custom');
+    if (preset) setPendingChanges(prev => ({ ...prev, ...preset }));
+  };
+
+  // 6) Save the current pendingChanges as a custom preset
   const handleSavePreset = async () => {
     const fileName = await window.presets.save(pendingChanges);
     if (fileName) alert(`✓ Saved as ${fileName}`);
   };
-  
 
-  // 7) Open the user‐preset folder in the OS file explorer
+  // 7) Reveal the user-preset folder in Explorer/Finder
   const handleOpenPresetFolder = () => {
     window.presets.openFolder();
   };
 
   return (
-    <div>
+    <div className="app-root">
       <Header
         isReady={isReady}
         setIsReady={setIsReady}
         setVehicleData={handleNewVehicle}
         vehicleData={vehicleData}
-        onLoadPreset={handleLoadPreset}
-        onAppendPreset={handleAppendPreset}
+        onLoadBuiltIn={handleLoadBuiltIn}
+        onAppendBuiltIn={handleAppendBuiltIn}
+        onLoadUser={handleLoadUser}
+        onAppendUser={handleAppendUser}
       />
 
       {isReady && vehicleData && (
         <>
           <TabStrip
             extractedData={vehicleData.jbeamFiles.engine.extracted}
+            rawContent={vehicleData.jbeamFiles.engine.raw}
             onFieldChange={handleFieldChange}
             pendingChanges={pendingChanges}
           />

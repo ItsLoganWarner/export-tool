@@ -1,0 +1,67 @@
+/* src/components/Footer/Footer.css */
+
+:root {
+    --primary: #16588E;
+    --primary-hover: #81C4FF;
+    --secondary: #e64a57;
+    --secondary-hover: #E7222E;
+    --border: #ccc;
+    --text-light: #666;
+  }
+  
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 0.5rem;       /* a bit tighter vertically */
+    border-top: 1px solid var(--border);
+    font-size: 0.9rem;
+    background: #fafafa;
+  }
+  
+  .footer-right {
+    display: flex;
+    gap: 0.75rem;
+  }
+  
+  .footer-button {
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .footer-button-apply {
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    border: 1px solid var(--secondary);
+    background: var(--secondary);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+  }
+  
+  .footer-button:hover {
+    background: var(--primary-hover);
+    border: 1px solid var(--primary-hover);
+    color: #fafafa;
+  }
+
+  .footer-button-apply:hover {
+    background: var(--secondary-hover);
+    border: 1px solid var(--secondary-hover);
+    color: #fafafa;
+  }
+  
+  .footer-credit {
+    /* no more margin-left:auto; it naturally sits on the left */
+    color: var(--text-light);
+    font-size: 0.8rem;
+    user-select: none;
+  }
+  

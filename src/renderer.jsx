@@ -44,6 +44,9 @@
 // ReactDOM.render(<App />, document.getElementById('app'));
 import React from 'react';
 import ReactDOM from 'react-dom';
+import './index.css';           // your existing base styles
+import './styles/presets.css';
+
 import App from './App';
 
 ReactDOM.render(<App />, document.getElementById('app'));

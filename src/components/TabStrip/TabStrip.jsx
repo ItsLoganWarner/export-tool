@@ -1,93 +1,89 @@
-// src/components/Tabs/TabStrip.jsx
 import React, { useState } from 'react';
+import {
+  FaGasPump,
+  FaCarCrash
+} from 'react-icons/fa';
+import { 
+    PiEngineFill,
+    PiSpeakerSimpleLowFill
+} from "react-icons/pi";
+import { BsSoundwave } from "react-icons/bs";
+import { GiCrownedExplosion } from "react-icons/gi";
+import { SiTurbo } from "react-icons/si";
+
 import GeneralTab from './tabs/GeneralTab';
 import AfterFireTab from './tabs/AfterFire/AfterFireTab';
 import ExhaustTab from './tabs/ExhaustTab';
 import ForcedInductionTab from './tabs/ForcedInduction/ForcedInductionTab';
+import './TabStrip.css';
 
-const tabs = ['General', 'Exhaust', 'AfterFire', 'Forced Induction', 'Fuel', 'ESC', 'Sound Inject'];
+const tabDefinitions = [
+  { key: 'General',     icon: <PiEngineFill /> },
+  { key: 'Exhaust',     icon: <PiSpeakerSimpleLowFill /> },
+  { key: 'AfterFire',   icon: <GiCrownedExplosion  /> },
+  { key: 'Forced Induction', icon: <SiTurbo  /> },
+  { key: 'Fuel',        icon: <FaGasPump /> },
+  { key: 'ESC',         icon: <FaCarCrash /> },
+  { key: 'Sound Inject',icon: <BsSoundwave   /> }
+];
 
-const TabStrip = ({ extractedData, onFieldChange, pendingChanges }) => {
-    const [selectedTab, setSelectedTab] = useState('General');
+export default function TabStrip({
+  extractedData,
+  rawContent,
+  onFieldChange,
+  pendingChanges
+}) {
+  const [active, setActive] = useState('General');
 
-    const renderTab = () => {
-        switch (selectedTab) {
-            case 'General':
-                return (
-                    <GeneralTab
-                        extractedData={extractedData}
-                        onFieldChange={onFieldChange}
-                        pendingChanges={pendingChanges}
-                    />
-                );
-            case 'AfterFire':
-                return (
-                    <AfterFireTab
-                        extractedData={extractedData}
-                        onFieldChange={onFieldChange}
-                        pendingChanges={pendingChanges}
-                    />
-                );
-            case 'Exhaust':
-                return (
-                    <ExhaustTab
-                        extractedData={extractedData}
-                        onFieldChange={onFieldChange}
-                        pendingChanges={pendingChanges}
-                    />
-                );
-            case 'Forced Induction':
-                return (
-                    <ForcedInductionTab
-                        extractedData={extractedData}
-                        onFieldChange={onFieldChange}
-                        pendingChanges={pendingChanges}
-                    />
-                );
-            default:
-                return <div>{selectedTab} tab coming soon...</div>;
-        }
-    };
+  const renderPanel = () => {
+    switch (active) {
+      case 'General':
+        return <GeneralTab
+          extractedData={extractedData}
+          onFieldChange={onFieldChange}
+          pendingChanges={pendingChanges}
+        />;
+      case 'Exhaust':
+        return <ExhaustTab
+          extractedData={extractedData}
+          onFieldChange={onFieldChange}
+          pendingChanges={pendingChanges}
+        />;
+      case 'AfterFire':
+        return <AfterFireTab
+          extractedData={extractedData}
+          rawContent={rawContent}
+          onFieldChange={onFieldChange}
+          pendingChanges={pendingChanges}
+        />;
+      case 'Forced Induction':
+        return <ForcedInductionTab
+          extractedData={extractedData}
+          onFieldChange={onFieldChange}
+          pendingChanges={pendingChanges}
+        />;
+      default:
+        return <div  className="card" style={{fontWeight: 'bold' }}>{active} tab coming soon…</div>;
+    }
+  };
 
-    return (
-        <div>
-            <div style={styles.tabStrip}>
-                {tabs.map((tab) => (
-                    <button
-                        key={tab}
-                        style={{
-                            ...styles.tabButton,
-                            backgroundColor: tab === selectedTab ? '#007F7F' : '#ccc',
-                            color: tab === selectedTab ? 'white' : 'black',
-                        }}
-                        onClick={() => setSelectedTab(tab)}
-                    >
-                        {tab}
-                    </button>
-                ))}
-            </div>
-            <div style={styles.tabContent}>
-                {renderTab()}
-            </div>
-        </div>
-    );
-};
-
-const styles = {
-    tabStrip: {
-        display: 'flex',
-        borderBottom: '2px solid black',
-    },
-    tabButton: {
-        padding: '0.5rem 1rem',
-        border: 'none',
-        cursor: 'pointer',
-        fontWeight: 'bold',
-        flex: 1,
-    },
-    tabContent: {
-        padding: '1rem',
-    },
-};
-
-export default TabStrip;
+  return (
+    <div className="app-container">
+      <nav className="sidebar">
+        {tabDefinitions.map(({ key, icon }) => (
+          <button
+            key={key}
+            className={`sidebar-tab${active === key ? ' active' : ''}`}
+            onClick={() => setActive(key)}
+          >
+            {icon}
+            <span className="sidebar-label">{key}</span>
+          </button>
+        ))}
+      </nav>
+      <div className="content">
+        {renderPanel()}
+      </div>
+    </div>
+  );
+}

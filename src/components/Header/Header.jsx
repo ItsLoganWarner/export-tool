@@ -1,87 +1,106 @@
-// src/components/Header/Header.jsx
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { FaCar, FaSyncAlt, FaPlus } from 'react-icons/fa';
 import { loadVehicleData } from '../../utils/loadVehicleData';
+import './Header.css';
 
-const Header = ({
+export default function Header({
   isReady,
   setIsReady,
   setVehicleData,
   vehicleData,
-  onLoadPreset,      // new
-  onAppendPreset     // new
-}) => {
+  onLoadBuiltIn,
+  onAppendBuiltIn,
+  onLoadUser,
+  onAppendUser
+}) {
+  const [open, setOpen] = useState(false);
+  const dropdownRef = useRef();
+
+  // close dropdown on outside click
+  useEffect(() => {
+    const onBodyClick = e => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setOpen(false);
+      }
+    };
+    document.body.addEventListener('click', onBodyClick);
+    return () => document.body.removeEventListener('click', onBodyClick);
+  }, []);
+
   const handleSelectDirectory = async () => {
-    const directoryPath = await window.electron.openDirectory();
-    if (!directoryPath) return;
-
-    const data = await loadVehicleData(directoryPath);
+    const dir = await window.electron.openDirectory();
+    if (!dir) return;
+    const data = await loadVehicleData(dir);
     if (!data) return;
-
     setVehicleData(data);
     setIsReady(true);
   };
 
   return (
-    <div className="header" style={styles.header}>
-      <div style={styles.left}>
-        <button onClick={handleSelectDirectory} style={styles.button}>
-          Select Car Export
+    <header className="app-header">
+      <div className="header-left">
+        <button
+          className="btn select-car"
+          onClick={handleSelectDirectory}
+        >
+          <FaCar className="icon-car" />
+          <span className="label">Select Car Export</span>
         </button>
       </div>
-      <div style={styles.center}>
+
+      <div className="header-center">
         {isReady ? (
           <>
-            <div>
-              Car: <strong>{vehicleData?.modelName || 'Unknown'}</strong>
+            <div className="title-line">
+              Car: <strong>{vehicleData.modelName}</strong>
             </div>
-            <div>
-              Engine: <strong>{vehicleData?.engineFileName || 'Unknown'}</strong>
+            <div className="title-line">
+              Engine: <strong>{vehicleData.engineFileName}</strong>
             </div>
           </>
         ) : (
-          <div style={styles.dimmed}>No vehicle loaded</div>
+          <div className="dimmed">No vehicle loaded</div>
         )}
       </div>
-      <div style={styles.right}>
+
+      <div className="header-right" ref={dropdownRef}>
         <button
-          style={styles.button}
-          onClick={() => onLoadPreset()}
+          className="btn presets-btn"
+          onClick={() => setOpen(o => !o)}
         >
-          Load Preset
+          Presets ▾
         </button>
-        <button
-          style={styles.button}
-          onClick={() => onAppendPreset()}
-        >
-          ＋
-        </button>
+        {open && (
+          <div className="preset-dropdown">
+            <div className="preset-row">
+              <span className="preset-label">Built-In</span>
+              <FaSyncAlt
+                className="preset-action"
+                title="Load Built-In Preset"
+                onClick={() => { setOpen(false); onLoadBuiltIn(); }}
+              />
+              <FaPlus
+                className="preset-action"
+                title="Add Built-In Preset"
+                onClick={() => { setOpen(false); onAppendBuiltIn(); }}
+              />
+            </div>
+            <div className="preset-row">
+              <span className="preset-label">User</span>
+              <FaSyncAlt
+                className="preset-action"
+                title="Load User Preset"
+                onClick={() => { setOpen(false); onLoadUser(); }}
+              />
+              <FaPlus
+                className="preset-action"
+                title="Add User Preset"
+                onClick={() => { setOpen(false); onAppendUser(); }}
+              />
+            </div>
+          </div>
+        )}
       </div>
-    </div>
+    </header>
   );
-};
-
-const styles = {
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '0.5rem 1rem',
-    borderBottom: '2px solid black',
-    background: 'linear-gradient(to right, #007F7F, #009F9F)',
-    color: 'white',
-  },
-  left: { flex: 1 },
-  center: { flex: 2, textAlign: 'center' },
-  right: { flex: 1, textAlign: 'right', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' },
-  button: {
-    padding: '0.5rem 1rem',
-    fontWeight: 'bold',
-    cursor: 'pointer',
-  },
-  dimmed: {
-    color: '#ccc',
-    fontStyle: 'italic',
-  }
-};
-
-export default Header;
+}

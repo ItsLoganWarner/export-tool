@@ -1,32 +1,50 @@
-// src/utils/updateJbeam.js
+import afterfireSchema from '../schemas/engine/afterfire.schema.js';
 
-/**
- * Given the raw .jbeam text and a map of pendingChanges { key: newValue, … },
- * produce a new text with only those assignments updated.
- * Lines beginning with // (or that key buried in comments) will be untouched.
- */
 export function updateJbeam(rawContent, pendingChanges) {
-  let updated = rawContent;
+  // 1) strip comments so we don’t accidentally match commented‐out lines
+  const clean = rawContent.replace(/\/\/.*$/gm, '');
+  const lines = rawContent.split('\n');
 
-  for (const [key, value] of Object.entries(pendingChanges)) {
-    // serialize value correctly
+  const { prefix, fields } = afterfireSchema;
+
+  for (const [key, newValue] of Object.entries(pendingChanges)) {
+    // serialize
     const serialized =
-      typeof value === 'string'
-        ? `"${value}"`
-        : value === null
-          ? 'null'
-          : String(value);
+      typeof newValue === 'string'
+        ? `"${newValue}"`
+        : (newValue === null ? 'null' : String(newValue));
 
-    // this regex only matches _actual_ assignments, not lines commented out
-    //   ^[ \t]*"key"\s*:\s*(oldValue)(,)
-    // it looks for a line that starts (after optional whitespace) with "key":
+    // match *actual* assignment lines
     const pattern = new RegExp(
       `(^[ \\t]*"${key}"\\s*:\\s*)(?:"[^"]*"|[^,\\r\\n]+)(,?)`,
       'm'
     );
 
-    updated = updated.replace(pattern, `$1${serialized}$2`);
+    const joined = lines.join('\n');
+    if (pattern.test(joined)) {
+      // replace existing line
+      for (let i = 0; i < lines.length; i++) {
+        if (pattern.test(lines[i])) {
+          lines[i] = lines[i].replace(pattern, `$1${serialized}$2`);
+          break;
+        }
+      }
+    } else if (fields[key]) {
+      // no existing line & it’s an AfterFire field → insert under its insertUnder block
+      const insertUnder = afterfireSchema.fields[key].insertUnder;
+      // find the last occurrence of any field in that insertUnder group
+      const idx = lines
+        .map((l, i) => ({l, i}))
+        .filter(({l}) => l.includes(`"${insertUnder}"`))
+        .map(o => o.i)
+        .pop();
+      if (idx != null) {
+        // preserve the indentation of that block
+        const indent = (lines[idx].match(/^(\s*)/) || [''])[1];
+        lines.splice(idx + 1, 0, `${indent}"${key}": ${serialized},`);
+      }
+    }
   }
 
-  return updated;
+  return lines.join('\n');
 }
