@@ -7,3 +7,11 @@ contextBridge.exposeInMainWorld('electron', {
   applyChanges: (filePath, pendingChanges) =>
     ipcRenderer.invoke('jbeam:applyChanges', { filePath, pendingChanges }),
 });
+
+contextBridge.exposeInMainWorld('presets', {
+  list:       () => ipcRenderer.invoke('presets:list'),
+  load:       (which,name) => ipcRenderer.invoke('presets:load', which, name),
+  save:       (data)       => ipcRenderer.invoke('presets:save', data),
+  openFolder: () => ipcRenderer.invoke('presets:openFolder'),
+  pick: () => ipcRenderer.invoke('presets:pick')
+});

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import exhaustSchema from '../../../schemas/engine/exhaust.schema';
 
-const ExhaustTab = ({ extractedData, onFieldChange, pendingChanges }) => {
+const ExhaustTab = ({ extractedData, onFieldChange, pendingChanges= {} }) => {
   const [checked, setChecked] = useState({});
   const [values,  setValues]  = useState({});
 

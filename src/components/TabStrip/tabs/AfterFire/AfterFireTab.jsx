@@ -14,7 +14,7 @@ const schema = {
   }
 };
 
-const AfterFireTab = ({ extractedData, onFieldChange, pendingChanges }) => {
+const AfterFireTab = ({ extractedData, onFieldChange, pendingChanges= {} }) => {
   const [checked, setChecked] = useState({});
   const [values,  setValues]  = useState({});
 

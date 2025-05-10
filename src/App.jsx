@@ -5,24 +5,23 @@ import TabStrip from './components/TabStrip/TabStrip';
 import Footer from './components/Footer/Footer';
 
 const App = () => {
-  const [vehicleData, setVehicleData]       = useState(null);
-  const [isReady, setIsReady]               = useState(false);
-  const [pendingChanges, setPendingChanges] = useState({});
+  const [vehicleData,       setVehicleData]       = useState(null);
+  const [isReady,           setIsReady]           = useState(false);
+  const [pendingChanges,    setPendingChanges]    = useState({});
 
+  // 1) Field edits (with removal when null)
   const handleFieldChange = (key, value) => {
     setPendingChanges(prev => {
       if (value === null || value === undefined) {
-        // remove the key completely
         const { [key]: _, ...rest } = prev;
         return rest;
-      } else {
-        // set or overwrite
-        return { ...prev, [key]: value };
       }
+      return { ...prev, [key]: value };
     });
     console.log("✏️ Pending field change:", key, value);
   };
 
+  // 2) Apply to disk
   const handleApplyChanges = async () => {
     if (!vehicleData?.engineFilePath) {
       return alert("No engine file loaded!");
@@ -32,19 +31,48 @@ const App = () => {
       pendingChanges
     );
     if (res.success) {
-      console.log("JBeam file updated successfully");
       alert("✓ Changes applied to disk");
     } else {
-      console.error("JBeam update failed:", res.message);
       alert("✗ Failed to write file: " + res.message);
     }
   };
 
-    const handleNewVehicle = (data) => {
-        setVehicleData(data);
-        setPendingChanges({});   // << clear everything
-        setIsReady(true);
-    };
+  // 3) Load a brand‐new vehicle → clear out all old changes
+  const handleNewVehicle = (data) => {
+    setVehicleData(data);
+    setPendingChanges({});
+    setIsReady(true);
+  };
+
+  // 4) Load *replace* preset
+  const handleLoadPreset = async () => {
+    const preset = await window.presets.pick();
+    if (preset) {
+      setPendingChanges(preset);
+      console.log('Loaded preset:', preset);
+    }
+  };
+
+  // 5) Append on top of existing
+  const handleAppendPreset = async () => {
+    const preset = await window.presets.pick();
+    if (preset) {
+      setPendingChanges(prev => ({ ...prev, ...preset }));
+      console.log('Appended preset:', preset);
+    }
+  };
+
+  // 6) Save current pendingChanges as a new custom preset
+  const handleSavePreset = async () => {
+    const fileName = await window.presets.save(pendingChanges);
+    if (fileName) alert(`✓ Saved as ${fileName}`);
+  };
+  
+
+  // 7) Open the user‐preset folder in the OS file explorer
+  const handleOpenPresetFolder = () => {
+    window.presets.openFolder();
+  };
 
   return (
     <div>
@@ -53,6 +81,8 @@ const App = () => {
         setIsReady={setIsReady}
         setVehicleData={handleNewVehicle}
         vehicleData={vehicleData}
+        onLoadPreset={handleLoadPreset}
+        onAppendPreset={handleAppendPreset}
       />
 
       {isReady && vehicleData && (
@@ -62,7 +92,11 @@ const App = () => {
             onFieldChange={handleFieldChange}
             pendingChanges={pendingChanges}
           />
-          <Footer onApplyChanges={handleApplyChanges} />
+          <Footer
+            onApplyChanges={handleApplyChanges}
+            onSavePreset={handleSavePreset}
+            onOpenPresetFolder={handleOpenPresetFolder}
+          />
         </>
       )}
     </div>

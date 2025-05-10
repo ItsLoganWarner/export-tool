@@ -4,24 +4,24 @@ import turboSchema from '../../../../schemas/engine/forcedInduction/turbocharger
 import superSchema from '../../../../schemas/engine/forcedInduction/supercharger.schema.js';
 import { forcedInductionSounds } from './forcedInductionOptions.js';
 
-const ForcedInductionTab = ({ extractedData, onFieldChange, pendingChanges }) => {
+const ForcedInductionTab = ({ extractedData, onFieldChange, pendingChanges= {} }) => {
   const hasTurbo = 'bovSoundFileName' in extractedData;
-  const hasSuper = 'twistedLobes'     in extractedData;
+  const hasSuper = 'twistedLobes' in extractedData;
   if (!hasTurbo && !hasSuper) return <div>No forced induction detected.</div>;
   if (hasTurbo && hasSuper) return <div>Twin-Charging not currently supported its too much of a pain in the ass with the current shit ass parsing technique sorry.</div>;
 
-  const schema    = hasTurbo ? turboSchema : superSchema;
-  const label     = hasTurbo ? 'Turbocharger' : 'Supercharger';
-  const soundKey  = hasTurbo ? 'turbo' : 'supercharger';
-  const prefix    = 'event:>Vehicle>Forced_Induction>';
+  const schema = hasTurbo ? turboSchema : superSchema;
+  const label = hasTurbo ? 'Turbocharger' : 'Supercharger';
+  const soundKey = hasTurbo ? 'turbo' : 'supercharger';
+  const prefix = 'event:>Vehicle>Forced_Induction>';
   const { fields } = schema;
 
   const [checked, setChecked] = useState({});
-  const [values,  setValues]  = useState({});
+  const [values, setValues] = useState({});
 
   useEffect(() => {
     const initChecked = {};
-    const initValues  = {};
+    const initValues = {};
 
     for (const [key, def] of Object.entries(fields)) {
       const hasChange = pendingChanges.hasOwnProperty(key);
@@ -46,7 +46,7 @@ const ForcedInductionTab = ({ extractedData, onFieldChange, pendingChanges }) =>
     setChecked(prev => ({ ...prev, [key]: now }));
 
     if (now) {
-      onFieldChange(key, 
+      onFieldChange(key,
         fields[key].type === 'dropdown'
           ? prefix + values[key]
           : values[key]
@@ -72,7 +72,7 @@ const ForcedInductionTab = ({ extractedData, onFieldChange, pendingChanges }) =>
     } else {
       val = raw;
     }
-  
+
     setValues(prev => ({ ...prev, [key]: val }));
     if (checked[key]) {
       onFieldChange(

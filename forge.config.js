@@ -1,9 +1,19 @@
+// forge.config.js
+const path = require('path');
 const { FusesPlugin } = require('@electron-forge/plugin-fuses');
 const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 
 module.exports = {
   packagerConfig: {
     asar: true,
+    // Copy our `src/resources/presets` into the packaged app’s resources
+    extraResources: [
+      {
+        from: path.resolve(__dirname, 'src', 'resources', 'presets'),
+        to: 'presets',
+        filter: ['**/*']
+      }
+    ],
   },
   rebuildConfig: {},
   makers: [
@@ -48,8 +58,6 @@ module.exports = {
         },
       },
     },
-    // Fuses are used to enable/disable various Electron functionality
-    // at package time, before code signing the application
     new FusesPlugin({
       version: FuseVersion.V1,
       [FuseV1Options.RunAsNode]: false,

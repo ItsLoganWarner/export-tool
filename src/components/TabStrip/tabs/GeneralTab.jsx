@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import generalSchema from '../../../schemas/engine/general.schema';
 
-const GeneralTab = ({ extractedData, onFieldChange, pendingChanges }) => {
+const GeneralTab = ({ extractedData, onFieldChange, pendingChanges = {}}) => {
   const [checked, setChecked] = useState({});
   const [values,  setValues]  = useState({});
 

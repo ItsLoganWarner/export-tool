@@ -2,7 +2,14 @@
 import React from 'react';
 import { loadVehicleData } from '../../utils/loadVehicleData';
 
-const Header = ({ isReady, setIsReady, setVehicleData, vehicleData }) => {
+const Header = ({
+  isReady,
+  setIsReady,
+  setVehicleData,
+  vehicleData,
+  onLoadPreset,      // new
+  onAppendPreset     // new
+}) => {
   const handleSelectDirectory = async () => {
     const directoryPath = await window.electron.openDirectory();
     if (!directoryPath) return;
@@ -17,20 +24,37 @@ const Header = ({ isReady, setIsReady, setVehicleData, vehicleData }) => {
   return (
     <div className="header" style={styles.header}>
       <div style={styles.left}>
-        <button onClick={handleSelectDirectory} style={styles.button}>Select Car Export</button>
+        <button onClick={handleSelectDirectory} style={styles.button}>
+          Select Car Export
+        </button>
       </div>
       <div style={styles.center}>
         {isReady ? (
           <>
-            <div>Car: <strong>{vehicleData?.modelName || 'Unknown'}</strong></div>
-            <div>Engine: <strong>{vehicleData?.engineFileName || 'Unknown'}</strong></div>
+            <div>
+              Car: <strong>{vehicleData?.modelName || 'Unknown'}</strong>
+            </div>
+            <div>
+              Engine: <strong>{vehicleData?.engineFileName || 'Unknown'}</strong>
+            </div>
           </>
         ) : (
           <div style={styles.dimmed}>No vehicle loaded</div>
         )}
       </div>
       <div style={styles.right}>
-        <button style={styles.button}>Load Preset</button>
+        <button
+          style={styles.button}
+          onClick={() => onLoadPreset()}
+        >
+          Load Preset
+        </button>
+        <button
+          style={styles.button}
+          onClick={() => onAppendPreset()}
+        >
+          ＋
+        </button>
       </div>
     </div>
   );
@@ -48,7 +72,7 @@ const styles = {
   },
   left: { flex: 1 },
   center: { flex: 2, textAlign: 'center' },
-  right: { flex: 1, textAlign: 'right' },
+  right: { flex: 1, textAlign: 'right', display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' },
   button: {
     padding: '0.5rem 1rem',
     fontWeight: 'bold',
