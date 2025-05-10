@@ -33,7 +33,7 @@ export default {
         default: "Default",
         tip: "",
         canBeMissing: true,
-        insertUnder: "mainEngine"
+        insertUnder: "shiftAfterFireVolumeCoef"
       },
       sustainedAfterFireSound: {
         regex: /"sustainedAfterFireSound"\s*:\s*"([^"]+)"/,
@@ -42,7 +42,7 @@ export default {
         default: "Default",
         tip: "",
         canBeMissing: true,
-        insertUnder: "mainEngine"
+        insertUnder: "shiftAfterFireVolumeCoef"
       },
       shiftAfterFireSound: {
         regex: /"shiftAfterFireSound"\s*:\s*"([^"]+)"/,
@@ -51,7 +51,7 @@ export default {
         default: "Default",
         tip: "",
         canBeMissing: true,
-        insertUnder: "mainEngine"
+        insertUnder: "shiftAfterFireVolumeCoef"
       },
     }
   };
