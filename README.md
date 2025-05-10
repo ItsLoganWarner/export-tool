@@ -24,6 +24,11 @@
  - Currently only works on unzipped exports. In the future I hope to add support for zipped.
  - Twincharged engine forced induction values cannot currently be edited, due to the nuances of my current parsing implementation.
 
+ ## Planned Future Features
+ - More editing tabs
+ - Custom Sound Injection
+ - Maybe a way to adjust torque curve (hybrid simulation)
+
 ## Installation (Windows)
 
 1. Download the `Setup.exe` file from the [Releases page](https://github.com/ItsLoganWarner/exportomation/releases).
