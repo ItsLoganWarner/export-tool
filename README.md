@@ -38,8 +38,11 @@ Your existing settings and presets (both built-in and custom) live in `%APPDATA%
 ## Presets Folder
 
 All presets (built-in and custom) are stored at:
+
 `%APPDATA%/Exportomation/presets`
+
 `├─ built-in/`
+
 `└─ custom/`
 
 You can browse this folder in-app via **File → Open Preset Folder** or manually in Explorer.
