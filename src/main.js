@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron'; // Updated to include `shell`
 import path from 'node:path';
 import fs from 'fs';
-import { updateJbeam } from './utils/updateJbeam.js'; 
+import { updateJbeam } from './utils/updateJbeam.js';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -21,11 +21,12 @@ const createWindow = () => {
       contextIsolation: true,
       nodeIntegration: false,
       enableRemoteModule: false,
+      // devTools: true,  
     },
   });
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools({ mode: 'detach' });
 };
 
 app.whenReady().then(() => {
@@ -79,10 +80,21 @@ app.whenReady().then(() => {
   // PRESETS FOLDERS
   //
   const isDev = !app.isPackaged;
-  const builtInPresetsDir = isDev
-  ? path.join(process.cwd(), 'src', 'resources', 'presets')
-    : path.join(process.resourcesPath, 'presets');
+  console.log('⛳️ isDev?', isDev);
+  // const builtInPresetsDir = isDev
+  //   ? path.join(process.cwd(), 'resources', 'presets')
+  //   : path.join(process.resourcesPath, 'presets');
+  const devPresetsDir = path.resolve(process.cwd(), 'src', 'presets');
+// in prod, Forge’s extraResources lands under process.resourcesPath:
+const prodPresetsDir = path.join(process.resourcesPath, 'presets');
+
+const builtInPresetsDir = isDev ? devPresetsDir : prodPresetsDir;
   const userPresetsDir = path.join(app.getPath('userData'), 'presets');
+  console.log('⛳️ Looking for built-in presets in:', builtInPresetsDir);
+  console.log('⛳️ Exists?:', fs.existsSync(builtInPresetsDir));
+  if (fs.existsSync(builtInPresetsDir)) {
+    console.log('⛳️ Contents:', fs.readdirSync(builtInPresetsDir));
+  }
   fs.mkdirSync(builtInPresetsDir, { recursive: true });
   fs.mkdirSync(userPresetsDir, { recursive: true });
 

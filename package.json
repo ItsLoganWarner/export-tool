@@ -1,5 +1,5 @@
 {
-  "name": "Exportomation",
+  "name": "exportomation",
   "productName": "Exportomation",
   "version": "1.0.0",
   "description": "My Electron application description",
@@ -35,6 +35,11 @@
     "name": "Logan Warner",
     "email": "logantwarner98@gmail.com"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ItsLoganWarner/exportomation.git"
+  },
+  "homepage": "https://github.com/ItsLoganWarner/exportomation#readme",
   "license": "MIT",
   "dependencies": {
     "electron-squirrel-startup": "^1.0.1",

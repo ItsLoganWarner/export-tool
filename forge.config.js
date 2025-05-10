@@ -6,32 +6,44 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
-    // Copy our `src/resources/presets` into the packaged app’s resources
+    // point at your icon _without_ extension; electron-packager will pick .ico/.icns
+    icon: path.resolve(__dirname, 'assets', 'icons', 'app-icon'),
+    // copy presets into the packaged `resources/presets` folder
     extraResources: [
       {
-        from: path.resolve(__dirname, 'src', 'resources', 'presets'),
-        to: 'presets',
-        filter: ['**/*']
+        from: path.resolve(__dirname, 'src', 'presets'),
+        to:   'presets'
       }
-    ],
+    ]
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        name: 'exportomation',
+        setupExe: 'Exportomation-${version}-Setup.exe',
+        setupIcon: path.resolve(__dirname, 'assets', 'icons', 'app-icon.ico'),
+      },
     },
     {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
+      config: {
+        artifactName: '${productName}-${version}.zip'
+      }
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {},
+      config: {
+        artifactName: '${productName}-${version}.deb',
+      }
     },
     {
       name: '@electron-forge/maker-rpm',
-      config: {},
+      config: {
+        artifactName: '${productName}-${version}.rpm',
+      }
     },
   ],
   plugins: [
