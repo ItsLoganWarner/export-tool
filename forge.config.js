@@ -8,13 +8,6 @@ module.exports = {
     asar: true,
     // point at your icon _without_ extension; electron-packager will pick .ico/.icns
     icon: path.resolve(__dirname, 'assets', 'icons', 'app-icon'),
-    // copy presets into the packaged `resources/presets` folder
-    extraResources: [
-      {
-        from: path.resolve(__dirname, 'src', 'presets'),
-        to:   'presets'
-      }
-    ]
   },
   rebuildConfig: {},
   makers: [

@@ -1,13 +1,8 @@
-// require all JSON files from ../presets
-const req = require.context(
-    '../presets',  // relative to this file
-    false,         // do not recurse
-    /\.json$/      // only .json
-  );
-  
-  export const builtInPresets = req.keys().reduce((map, filepath) => {
-    // filepath === "./myPreset.json"
-    const name = filepath.replace(/^\.\//, '');      // "myPreset.json"
-    map[name] = req(filepath);                       // parsed JSON
-    return map;
-  }, {});
+// src/utils/builtInPresets.js
+// — no original snippet here, just a new helper file
+const requireContext = require.context('../presets', false, /\.json$/);
+const builtInPresets = requireContext.keys().map(key => ({
+  name: key.replace('./', '').replace(/\.json$/, ''),
+  data: requireContext(key),
+}));
+export default builtInPresets;

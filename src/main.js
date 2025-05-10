@@ -2,6 +2,7 @@ import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron'; // Update
 import path from 'node:path';
 import fs from 'fs';
 import { updateJbeam } from './utils/updateJbeam.js';
+import builtInPresets from './utils/builtInPresets.js'  // Import built-in presets
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -79,38 +80,56 @@ app.whenReady().then(() => {
   //
   // PRESETS FOLDERS
   //
-  const isDev = !app.isPackaged;
-  console.log('⛳️ isDev?', isDev);
-  // const builtInPresetsDir = isDev
-  //   ? path.join(process.cwd(), 'resources', 'presets')
-  //   : path.join(process.resourcesPath, 'presets');
-  const devPresetsDir = path.resolve(process.cwd(), 'src', 'presets');
-// in prod, Forge’s extraResources lands under process.resourcesPath:
-const prodPresetsDir = path.join(process.resourcesPath, 'presets');
+  // const isDev = !app.isPackaged;
+  // console.log('⛳️ isDev?', isDev);
+  // // const builtInPresetsDir = isDev
+  // //   ? path.join(process.cwd(), 'resources', 'presets')
+  // //   : path.join(process.resourcesPath, 'presets');
+  // const devPresetsDir = path.resolve(process.cwd(), 'src', 'presets');
+  // // in prod, Forge’s extraResources lands under process.resourcesPath:
+  // const prodPresetsDir = path.join(process.resourcesPath, 'presets');
 
-const builtInPresetsDir = isDev ? devPresetsDir : prodPresetsDir;
-  const userPresetsDir = path.join(app.getPath('userData'), 'presets');
-  console.log('⛳️ Looking for built-in presets in:', builtInPresetsDir);
-  console.log('⛳️ Exists?:', fs.existsSync(builtInPresetsDir));
-  if (fs.existsSync(builtInPresetsDir)) {
-    console.log('⛳️ Contents:', fs.readdirSync(builtInPresetsDir));
-  }
-  fs.mkdirSync(builtInPresetsDir, { recursive: true });
-  fs.mkdirSync(userPresetsDir, { recursive: true });
+  // const builtInPresetsDir = isDev ? devPresetsDir : prodPresetsDir;
+  // const userPresetsDir = path.join(app.getPath('userData'), 'presets');
+  // console.log('⛳️ Looking for built-in presets in:', builtInPresetsDir);
+  // console.log('⛳️ Exists?:', fs.existsSync(builtInPresetsDir));
+  // if (fs.existsSync(builtInPresetsDir)) {
+  //   console.log('⛳️ Contents:', fs.readdirSync(builtInPresetsDir));
+  // }
+  // // fs.mkdirSync(builtInPresetsDir, { recursive: true });
+  // fs.mkdirSync(userPresetsDir, { recursive: true });
+
+  const baseDir = path.join(app.getPath('userData'), 'presets');
+  const builtinDir = path.join(baseDir, 'built-in');
+  const customDir = path.join(baseDir, 'custom');
+
+  // only create the two folders under AppData:
+  fs.mkdirSync(builtinDir, { recursive: true });
+  fs.mkdirSync(customDir, { recursive: true });
+
+  // overwrite every built-in preset on each startup:
+  builtInPresets.forEach(({ name, data }) => {
+    const fp = path.join(builtinDir, `${name}.json`);
+    fs.writeFileSync(fp, JSON.stringify(data, null, 2), 'utf-8');
+  });
+
 
   // List all .json in both dirs
   ipcMain.handle('presets:list', async () => {
-    const builtIn = await fs.promises.readdir(builtInPresetsDir);
-    const custom = await fs.promises.readdir(userPresetsDir);
+    const [builtIn, custom] = await Promise.all([
+      fs.promises.readdir(builtinDir),
+      fs.promises.readdir(customDir),
+    ]);
     return {
       builtIn: builtIn.filter(f => f.endsWith('.json')),
       custom: custom.filter(f => f.endsWith('.json')),
     };
   });
 
+
   // Load one preset
   ipcMain.handle('presets:load', async (_evt, which, name) => {
-    const dir = which === 'custom' ? userPresetsDir : builtInPresetsDir;
+    const dir = which === 'custom' ? customDir : builtinDir;
     const raw = await fs.promises.readFile(path.join(dir, name), 'utf-8');
     return JSON.parse(raw);
   });
@@ -119,7 +138,7 @@ const builtInPresetsDir = isDev ? devPresetsDir : prodPresetsDir;
   ipcMain.handle('presets:save', async (_evt, data) => {
     const { canceled, filePath } = await dialog.showSaveDialog({
       title: 'Save your preset',
-      defaultPath: path.join(userPresetsDir, 'my-preset.json'),
+      defaultPath: path.join(customDir, 'my-preset.json'),
       filters: [{ name: 'JSON', extensions: ['json'] }]
     });
     if (canceled || !filePath) return null;
@@ -129,14 +148,14 @@ const builtInPresetsDir = isDev ? devPresetsDir : prodPresetsDir;
 
   // Optionally “Show folder”:
   ipcMain.handle('presets:openFolder', () => {
-    shell.openPath(userPresetsDir);
+    shell.openPath(customDir);
   });
 
   // Replace the old pick handler
   ipcMain.handle('presets:pick', async (_evt, which) => {
     const defaultPath = which === 'custom'
-      ? userPresetsDir
-      : builtInPresetsDir;
+      ? customDir
+      : builtinDir;
     const title = which === 'custom'
       ? 'Select a User Preset'
       : 'Select a Built-In Preset';
