@@ -2,12 +2,14 @@
 import React, { useState } from 'react';
 import Header from './components/Header/Header';
 import TabStrip from './components/TabStrip/TabStrip';
+import { loadVehicleData } from './utils/loadVehicleData'; // Assuming this is a utility function to load vehicle data
 import Footer from './components/Footer/Footer';
 
 const App = () => {
     const [vehicleData, setVehicleData] = useState(null);
     const [isReady, setIsReady] = useState(false);
     const [pendingChanges, setPendingChanges] = useState({});
+    const [isApplied, setIsApplied] = useState(false);
 
     // 1) Field edits (remove key if null/undefined)
     const handleFieldChange = (partKey, key, value) => {
@@ -30,12 +32,14 @@ const App = () => {
             }
         }
         alert('✓ All changes applied!');
+        setIsApplied(true);
     };
 
     // 3) When you pick a new car export
     const handleNewVehicle = (data) => {
         setVehicleData(data);
         setPendingChanges({});
+        setIsApplied(false);
         setIsReady(true);
     };
 
@@ -86,6 +90,21 @@ const App = () => {
         window.presets.openFolder();
     };
 
+    // Revert changes by writing original raw text back to files
+    const handleRevert = async () => {
+        // Write each part's original raw text back to its file
+        for (const [partKey, part] of Object.entries(vehicleData.parts)) {
+            const original = part.raw || part.parsed.raw;
+            const { success, message } = await window.electron.writeFile(part.filePath, original);
+            if (!success) {
+                return alert(`Failed to revert ${partKey}: ${message}`);
+            }
+        }
+        // Clear UI diffs & flip back
+        setPendingChanges({});
+        setIsApplied(false);
+    };
+
     return (
         <div className="app-root">
             <Header
@@ -107,9 +126,10 @@ const App = () => {
                         pendingChanges={pendingChanges}
                     />
                     <Footer
-                        onApplyChanges={handleApplyChanges}
+                        onApplyChanges={isApplied ? handleRevert : handleApplyChanges}
                         onSavePreset={handleSavePreset}
                         onOpenPresetFolder={handleOpenPresetFolder}
+                        isApplied={isApplied}
                     />
                 </>
             )}
