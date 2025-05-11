@@ -1,8 +1,0 @@
-{
-  "lobes": 4,
-  "twistedLobes": true,
-  "whineLoopEvent": "event:>Vehicle>Forced_Induction>Supercharger_03>supercharger",
-  "whineVolumePerPSI": 0.43,
-  "whinePitchPer10kRPM": 0.85,
-  "whineVolumePer10kRPM": 0.13
-}
