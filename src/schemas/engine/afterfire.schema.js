@@ -1,58 +1,80 @@
-// add canBeMissing and insertUnder to drive both parseJbeam2 and updateJbeam
 export default {
-    prefix: "event:>Vehicle>Afterfire>",
-    fields: {
-      instantAfterFireVolumeCoef: {
-        regex: /"instantAfterFireVolumeCoef"\s*:\s*([0-9.]+)/,
-        type: "number",
-        default: 0.6,
-        tip: "",
-        canBeMissing: false,
-        insertUnder: "mainEngine"
-      },
-      sustainedAfterFireVolumeCoef: {
-        regex: /"sustainedAfterFireVolumeCoef"\s*:\s*([0-9.]+)/,
-        type: "number",
-        default: 0.55,
-        tip: "",
-        canBeMissing: false,
-        insertUnder: "mainEngine"
-      },
-      shiftAfterFireVolumeCoef: {
-        regex: /"shiftAfterFireVolumeCoef"\s*:\s*([0-9.]+)/,
-        type: "number",
-        default: 0.8,
-        tip: "",
-        canBeMissing: false,
-        insertUnder: "mainEngine"
-      },
-      instantAfterFireSound: {
-        regex: /"instantAfterFireSound"\s*:\s*"([^"]+)"/,
-        type: "dropdown",
-        category: "single",
-        default: "Default",
-        tip: "",
-        canBeMissing: true,
-        insertUnder: "shiftAfterFireVolumeCoef"
-      },
-      sustainedAfterFireSound: {
-        regex: /"sustainedAfterFireSound"\s*:\s*"([^"]+)"/,
-        type: "dropdown",
-        category: "multi",
-        default: "Default",
-        tip: "",
-        canBeMissing: true,
-        insertUnder: "shiftAfterFireVolumeCoef"
-      },
-      shiftAfterFireSound: {
-        regex: /"shiftAfterFireSound"\s*:\s*"([^"]+)"/,
-        type: "dropdown",
-        category: "shift",
-        default: "Default",
-        tip: "",
-        canBeMissing: true,
-        insertUnder: "shiftAfterFireVolumeCoef"
-      },
-    }
-  };
-  
+  prefix: "event:>Vehicle>Afterfire>",
+  fields: {
+    instantAfterFireVolumeCoef: {
+      type: "number",
+      default: 0.6,
+      tip: "",
+      canBeMissing: false,
+      locations: {
+        engine: {
+          regex: /"instantAfterFireVolumeCoef"\s*:\s*([0-9.]+)/,
+          insertUnder: "mainEngine",
+        }
+      }
+    },
+    sustainedAfterFireVolumeCoef: {
+      type: "number",
+      default: 0.55,
+      tip: "",
+      canBeMissing: false,
+      locations: {
+        engine: {
+          regex: /"sustainedAfterFireVolumeCoef"\s*:\s*([0-9.]+)/,
+          insertUnder: "mainEngine",
+        }
+      }
+    },
+    shiftAfterFireVolumeCoef: {
+      type: "number",
+      default: 0.8,
+      tip: "",
+      canBeMissing: false,
+      locations: {
+        engine: {
+          regex: /"shiftAfterFireVolumeCoef"\s*:\s*([0-9.]+)/,
+          insertUnder: "mainEngine",
+        }
+      }
+    },
+    instantAfterFireSound: {
+      type: "dropdown",
+      category: "single",
+      default: "Default",
+      tip: "",
+      canBeMissing: true,
+      locations: {
+        engine: {
+          regex: /"instantAfterFireSound"\s*:\s*"([^"]+)"/,
+          insertUnder: "shiftAfterFireVolumeCoef",
+        }
+      }
+    },
+    sustainedAfterFireSound: {
+      type: "dropdown",
+      category: "multi",
+      default: "Default",
+      tip: "",
+      canBeMissing: true,
+      locations: {
+        engine: {
+          regex: /"sustainedAfterFireSound"\s*:\s*"([^"]+)"/,
+          insertUnder: "shiftAfterFireVolumeCoef",
+        }
+      }
+    },
+    shiftAfterFireSound: {
+      type: "dropdown",
+      category: "shift",
+      default: "Default",
+      tip: "",
+      canBeMissing: true,
+      locations: {
+        engine: {
+          regex: /"shiftAfterFireSound"\s*:\s*"([^"]+)"/,
+          insertUnder: "shiftAfterFireVolumeCoef",
+        }
+      }
+    },
+  }
+};
