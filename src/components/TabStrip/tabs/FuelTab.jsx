@@ -1,66 +1,106 @@
+// src/components/Tabs/tabs/FuelTab.jsx
 import React, { useState, useEffect } from 'react';
 import fuelSchema from '../../../schemas/engine/fuel.schema';
 
 export default function FuelTab({
-  // assume vehicleData.parts = { engine: {...}, tank: {...} }
-  extractedParts,     // { engine: {...}, tank: {...} }
-  pendingChanges = {},// { engine: {...}, tank: {...} }
-  onFieldChange       // (partKey, fieldKey, value) => void
+  extractedParts: { engine, fueltank },
+  pendingChanges: { engine: pendEng = {}, fueltank: pendTank = {} },
+  onFieldChange // (partKey, key, value)
 }) {
   const fields = fuelSchema.fields;
-  const [checked, setChecked] = useState({});
-  const [values,  setValues]  = useState({});
 
-  // initialize state from both parts
+  // local checkbox + input state
+  const [checked, setChecked] = useState({});
+  const [values, setValues]   = useState({});
+
+  // whenever engine/fueltank or pendingChanges change, re‐init the form
   useEffect(() => {
     const initChecked = {};
     const initValues  = {};
 
     Object.entries(fields).forEach(([key, def]) => {
-      // if either part has a change for this key
-      const isEngineChanged = pendingChanges.engine?.hasOwnProperty(key);
-      const isTankChanged   = pendingChanges.tank?.hasOwnProperty(key);
-      const hasChange = isEngineChanged || isTankChanged;
-      initChecked[key] = hasChange;
+      const hasE = Object.prototype.hasOwnProperty.call(pendEng, key);
+      const hasT = Object.prototype.hasOwnProperty.call(pendTank, key);
+      initChecked[key] = hasE || hasT;
 
-      // display value prefers engine change, then tank change, then engine extracted, then tank extracted, then default
-      let val = def.default;
-      if (isEngineChanged) val = pendingChanges.engine[key];
-      else if (isTankChanged) val = pendingChanges.tank[key];
-      else if (extractedParts.engine[key] != null) val = extractedParts.engine[key];
-      else if (extractedParts.tank[key] != null) val = extractedParts.tank[key];
+      let val;
+      if (hasE)       val = pendEng[key];
+      else if (hasT)  val = pendTank[key];
+      else if (def.locations.engine)   val = engine[key] ?? def.default;
+      else if (def.locations.fueltank) val = fueltank[key] ?? def.default;
+      else                             val = def.default;
 
-      // strip quotes for dropdown display
-      initValues[key] = typeof val === 'string' ? val.replace(/"/g,'') : val;
+      // format textarea inner lines
+      if (def.type === 'textarea') {
+        try {
+          val = val.map(pair => {
+            const [a, b] = pair;
+            const fa = typeof a === 'number' ? a.toFixed(2) : a;
+            const fb = typeof b === 'number' ? b.toFixed(2) : b;
+            return `[${fa}, ${fb}],`;
+          }).join('\n');
+        } catch {
+          val = def.default;
+        }
+      }
+
+      initValues[key] = val;
     });
 
     setChecked(initChecked);
     setValues(initValues);
-  }, [extractedParts, pendingChanges]);
+  }, [engine, fueltank, pendEng, pendTank]);
 
   // toggle a field on/off
-  const handleCheckbox = (key) => {
+  const handleCheckbox = key => {
     const now = !checked[key];
     setChecked(c => ({ ...c, [key]: now }));
+
     if (!now) {
-      // clearing both parts
-      onFieldChange('engine', key, null);
-      onFieldChange('tank',   key, null);
+      Object.keys(fields[key].locations).forEach(partKey =>
+        onFieldChange(partKey, key, null)
+      );
     } else {
-      // turning on: emit current value to both
-      const val = values[key];
-      onFieldChange('engine', key, `"${val}"`);
-      onFieldChange('tank',   key, `"${val}"`);
+      const def = fields[key];
+      let raw = values[key];
+      if (def.type === 'textarea') {
+        try {
+          const text = values[key].trim().replace(/,\s*$/, '');
+          raw = JSON.parse(`[${text}]`);
+        } catch {
+          raw = def.default;
+        }
+      }
+      Object.keys(def.locations).forEach(partKey =>
+        onFieldChange(partKey, key, raw)
+      );
     }
   };
 
-  // value changed in the dropdown
-  const handleValueChange = (key, raw) => {
-    setValues(v => ({ ...v, [key]: raw }));
-    if (checked[key]) {
-      onFieldChange('engine', key, `"${raw}"`);
-      onFieldChange('tank',   key, `"${raw}"`);
+  // handle value edits
+  const handleValueChange = (key, newRaw) => {
+    const def = fields[key];
+    setValues(v => ({ ...v, [key]: newRaw }));
+    if (!checked[key]) return;
+
+    let out;
+    if (def.type === 'number') {
+      const n = parseFloat(newRaw);
+      out = isNaN(n) ? def.default : n;
+    } else if (def.type === 'textarea') {
+      try {
+        const txt = newRaw.trim().replace(/,\s*$/, '');
+        out = JSON.parse(`[${txt}]`);
+      } catch {
+        out = def.default;
+      }
+    } else {
+      out = newRaw;
     }
+
+    Object.keys(def.locations).forEach(partKey =>
+      onFieldChange(partKey, key, out)
+    );
   };
 
   return (
@@ -74,16 +114,41 @@ export default function FuelTab({
             style={{ marginRight: 8 }}
           />
           <label title={def.tip} style={{ width: 180, fontWeight: 'bold' }}>{key}</label>
-          <select
-            disabled={!checked[key]}
-            value={values[key]}
-            onChange={e => handleValueChange(key, e.target.value)}
-            style={{ marginLeft: 10, width: 200 }}
-          >
-            {def.options.map(opt => (
-              <option key={opt} value={opt}>{opt}</option>
-            ))}
-          </select>
+
+          {def.type === 'dropdown' ? (
+            <>
+              <select
+                disabled={!checked[key]}
+                value={values[key]}
+                onChange={e => handleValueChange(key, e.target.value)}
+                style={{ marginLeft: 10, width: 160 }}
+              >
+                <option value="">--</option>
+                {def.options.map(o => <option key={o} value={o}>{o}</option>)}
+              </select>
+              {key === 'requiredEnergyType' && checked[key] && (
+                <span style={{ color: 'red', marginLeft: 12 }}>
+                  Note: If you want to fully change fuel types (updating densities and burn efficiency), there's probably already a Built-In Preset that does this for you.
+                </span>
+              )}
+            </>
+          ) : def.type === 'textarea' ? (
+            <textarea
+              disabled={!checked[key]}
+              value={values[key]}
+              onChange={e => handleValueChange(key, e.target.value)}
+              style={{ marginLeft: 10, width: '100%', height: 120 }}
+            />
+          ) : (
+            <input
+              type={def.type === 'number' ? 'number' : 'text'}
+              step={def.type === 'number' ? 'any' : undefined}
+              disabled={!checked[key]}
+              value={values[key]}
+              onChange={e => handleValueChange(key, e.target.value)}
+              style={{ marginLeft: 10, width: def.type === 'number' ? 100 : 200 }}
+            />
+          )}
         </div>
       ))}
     </div>

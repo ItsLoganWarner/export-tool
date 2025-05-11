@@ -32,7 +32,7 @@ export async function loadVehicleData(directoryPath) {
   // build array of folders to load
   const partFolders = [engineFolder, modelFolder].filter(Boolean);
 
-  // ————— Load only engine & fuel_tank JBEAMs —————
+  // ————— Load only engine & fueltank JBEAMs —————
   const parts = {};
   for (const folder of partFolders) {
     const folderPath = `${vehiclePath}/${folder}`;
@@ -55,12 +55,12 @@ export async function loadVehicleData(directoryPath) {
       continue;
     }
 
-    // derive a clean partKey (e.g., 'engine', 'fuel_tank')
+    // derive a clean partKey (e.g., 'engine', 'fueltank')
     const base = jbeamFile.replace(/^camso_/, '').replace(/\.jbeam$/, '');
     const segments = base.split('_');
     let partKey = segments.slice(0, -1).join('_');
     // normalize fuel tank
-    if (partKey === 'fueltank') partKey = 'fuel_tank';
+    if (partKey === 'fueltank') partKey = 'fueltank';
 
     parts[partKey] = {
       fileName: jbeamFile,

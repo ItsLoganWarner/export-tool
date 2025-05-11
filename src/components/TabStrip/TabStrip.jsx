@@ -29,13 +29,13 @@ const tabDefinitions = [
 ];
 
 export default function TabStrip({
-    parts,               // { engine, fuel_tank, … }
+    parts,               // { engine, fueltank, … }
     onFieldChange,       // (partKey, fieldKey, value)
-    pendingChanges       // { engine: {...}, fuel_tank: {...}, … }
+    pendingChanges       // { engine: {...}, fueltank: {...}, … }
 }) {
     const [active, setActive] = useState('General');
     const enginePart = parts.engine     || { extracted:{}, raw: '' };
-    const fuelPart   = parts.fuel_tank  || { extracted:{}, raw: '' };
+    const fuelPart   = parts.fueltank  || { extracted:{}, raw: '' };
 
     const renderPanel = () => {
         switch (active) {
@@ -72,11 +72,11 @@ export default function TabStrip({
                 return <FuelTab
                     extractedParts={{
                         engine: enginePart.extracted,
-                        tank: fuelPart.extracted
+                        fueltank: fuelPart.extracted
                     }}
                     pendingChanges={{
                         engine: pendingChanges.engine || {},
-                        tank: pendingChanges.fuel_tank || {}
+                        fueltank: pendingChanges.fueltank || {}
                     }}
                     onFieldChange={onFieldChange}
                 />;

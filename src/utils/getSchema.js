@@ -13,11 +13,11 @@ export function getSchemasForPart(partKey, rawContent) {
   const out = [];
 
   if (normalized.startsWith('camso_engine')) {
-    out.push(general, exhaust, afterfire);
+    out.push(general, exhaust, afterfire,fuelSchema);
     if (rawContent.includes('"turbocharger"')) out.push(turbo);
     if (rawContent.includes('"supercharger"')) out.push(superchrg);
   }
-  if (normalized.startsWith('camso_fuel_tank')) {
+  if (normalized.startsWith('camso_fueltank')) {
     out.push(fuelSchema);
   }
   return out;

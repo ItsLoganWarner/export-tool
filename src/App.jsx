@@ -64,8 +64,20 @@ const App = () => {
     };
 
     // 6) Save the current pendingChanges as a custom preset
+    //    but patch in the raw textarea string for burnEfficiency
     const handleSavePreset = async () => {
-        const fileName = await window.presets.save(pendingChanges);
+        // Make a shallow copy
+        const toSave = { ...pendingChanges };
+        // If the engine has burnEfficiency, pull it from the FuelTab's values
+        const fuelTab = document.querySelector('textarea[name="burnEfficiency"]');
+        if (toSave.engine?.burnEfficiency && fuelTab) {
+            toSave.engine.burnEfficiency = fuelTab.value
+                .split('\n')
+                .map(line => line.trim().replace(/,$/, ''));
+            // now it's an array of strings like "[0.00, 1.00]"
+        }
+
+        const fileName = await window.presets.save(toSave);
         if (fileName) alert(`✓ Saved as ${fileName}`);
     };
 
