@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('electron', {
   readFile: (filePath) => ipcRenderer.invoke('fs:readFile', filePath),
   applyChanges: (filePath, pendingChanges) =>
     ipcRenderer.invoke('jbeam:applyChanges', { filePath, pendingChanges }),
+  writeFile: (filePath, contents) => ipcRenderer.invoke('fs:writeFile', filePath, contents),
 });
 
 contextBridge.exposeInMainWorld('presets', {

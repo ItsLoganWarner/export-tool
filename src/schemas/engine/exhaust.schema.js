@@ -1,88 +1,136 @@
 export default {
   fields: {
     mainGain: {
-      regex: /"mainGain"\s*:\s*([-0-9.]+)/,
       type: "number",
       default: 0,
       tip: "Main volume gain (dB)",
-      insertUnder: "soundConfigExhaust"
+      locations: {
+        engine: {
+          regex: /"mainGain"\s*:\s*([-0-9.]+)/,
+          insertUnder: "soundConfigExhaust",
+        }
+      }
     },
     maxLoadMix: {
-      regex: /"maxLoadMix"\s*:\s*([0-9.]+)/,
       type: "number",
       default: 1,
       tip: "Maximum load mix",
-      insertUnder: "soundConfigExhaust"
+      locations: {
+        engine: {
+          regex: /"maxLoadMix"\s*:\s*([0-9.]+)/,
+          insertUnder: "soundConfigExhaust",
+        }
+      }
     },
     minLoadMix: {
-      regex: /"minLoadMix"\s*:\s*([0-9.]+)/,
       type: "number",
       default: 0,
       tip: "Minimum load mix",
-      insertUnder: "soundConfigExhaust"
+      locations: {
+        engine: {
+          regex: /"minLoadMix"\s*:\s*([0-9.]+)/,
+          insertUnder: "soundConfigExhaust",
+        }
+      }
     },
     onLoadGain: {
-      regex: /"onLoadGain"\s*:\s*([0-9.]+)/,
       type: "number",
       default: 1,
       tip: "Gain when under load",
-      insertUnder: "soundConfigExhaust"
+      locations: {
+        engine: {
+          regex: /"onLoadGain"\s*:\s*([0-9.]+)/,
+          insertUnder: "soundConfigExhaust",
+        }
+      }
     },
     offLoadGain: {
-      regex: /"offLoadGain"\s*:\s*([0-9.]+)/,
       type: "number",
       default: 0.8,
       tip: "Gain when off load",
-      insertUnder: "soundConfigExhaust"
+      locations: {
+        engine: {
+          regex: /"offLoadGain"\s*:\s*([0-9.]+)/,
+          insertUnder: "soundConfigExhaust",
+        }
+      }
     },
     eqLowGain: {
-      regex: /"eqLowGain"\s*:\s*([-0-9.]+)/,
       type: "number",
       default: 0,
       tip: "Low EQ gain (dB)",
-      insertUnder: "soundConfigExhaust"
+      locations: {
+        engine: {
+          regex: /"eqLowGain"\s*:\s*([-0-9.]+)/,
+          insertUnder: "soundConfigExhaust",
+        }
+      }
     },
     eqLowFreq: {
-      regex: /"eqLowFreq"\s*:\s*([0-9.]+)/,
       type: "number",
       default: 400,
       tip: "Low EQ frequency (Hz)",
-      insertUnder: "soundConfigExhaust"
+      locations: {
+        engine: {
+          regex: /"eqLowFreq"\s*:\s*([0-9.]+)/,
+          insertUnder: "soundConfigExhaust",
+        }
+      }
     },
     eqLowWidth: {
-      regex: /"eqLowWidth"\s*:\s*([0-9.]+)/,
       type: "number",
       default: 1,
       tip: "Low EQ width",
-      insertUnder: "soundConfigExhaust"
+      locations: {
+        engine: {
+          regex: /"eqLowWidth"\s*:\s*([0-9.]+)/,
+          insertUnder: "soundConfigExhaust",
+        }
+      }
     },
     eqHighGain: {
-      regex: /"eqHighGain"\s*:\s*([-0-9.]+)/,
       type: "number",
       default: 1.21,
       tip: "High EQ gain (dB)",
-      insertUnder: "soundConfigExhaust"
+      locations: {
+        engine: {
+          regex: /"eqHighGain"\s*:\s*([-0-9.]+)/,
+          insertUnder: "soundConfigExhaust",
+        }
+      }
     },
     eqHighFreq: {
-      regex: /"eqHighFreq"\s*:\s*([0-9.]+)/,
       type: "number",
       default: 6000,
       tip: "High EQ frequency (Hz)",
-      insertUnder: "soundConfigExhaust"
+      locations: {
+        engine: {
+          regex: /"eqHighFreq"\s*:\s*([0-9.]+)/,
+          insertUnder: "soundConfigExhaust",
+        }
+      }
     },
     eqHighWidth: {
-      regex: /"eqHighWidth"\s*:\s*([0-9.]+)/,
       type: "number",
       default: 0.5,
       tip: "High EQ width",
-      insertUnder: "soundConfigExhaust"
+      locations: {
+        engine: {
+          regex: /"eqHighWidth"\s*:\s*([0-9.]+)/,
+          insertUnder: "soundConfigExhaust",
+        }
+      }
     },
     lowCutFreq: {
-      regex: /"lowCutFreq"\s*:\s*([0-9.]+)/,
       type: "number",
       default: 80,
       tip: "Low cut frequency (Hz)",
-      insertUnder: "soundConfigExhaust"
+      locations: {
+        engine: {
+          regex: /"lowCutFreq"\s*:\s*([0-9.]+)/,
+          insertUnder: "soundConfigExhaust",
+        }
+      }
     }
   }
 };

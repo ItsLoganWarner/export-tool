@@ -1,0 +1,34 @@
+{
+  "engine": {
+    "requiredEnergyType": "diesel",
+    "burnEfficiency": [
+      [
+        0,
+        0.1
+      ],
+      [
+        0.05,
+        0.24
+      ],
+      [
+        0.4,
+        0.32
+      ],
+      [
+        0.7,
+        0.4
+      ],
+      [
+        1,
+        0.28
+      ]
+    ],
+    "fuelLiquidDensity": 0.84,
+    "energyDensity": 45000000
+  },
+  "fueltank": {
+    "requiredEnergyType": "diesel",
+    "fuelLiquidDensity": 0.84,
+    "energyDensity": 45000000
+  }
+}

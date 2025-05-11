@@ -78,3 +78,16 @@
 .footer-link:hover {
     text-decoration: underline;
 }
+
+.footer-button-apply.revert {
+    background: white;
+    color: var(--secondary);
+    /* keep the red border */
+    border: 1px solid var(--secondary);
+  }
+  
+  /* Optional: hover state for Revert */
+  .footer-button-apply.revert:hover {
+    background: var(--secondary-hover);
+    color: #fafafa;
+  }

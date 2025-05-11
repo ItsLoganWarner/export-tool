@@ -33,6 +33,7 @@ export default function Header({
     const data = await loadVehicleData(dir);
     if (!data) return;
     setVehicleData(data);
+    console.log('Loaded vehicle data:', data);
     setIsReady(true);
   };
 
@@ -55,7 +56,7 @@ export default function Header({
               Car: <strong>{vehicleData.modelName}</strong>
             </div>
             <div className="title-line">
-              Engine: <strong>{vehicleData.engineFileName}</strong>
+              Engine: <strong>{vehicleData.parts.engine?.fileName}</strong>
             </div>
           </>
         ) : (

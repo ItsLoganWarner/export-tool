@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import {
-  FaGasPump,
-  FaCarCrash
+    FaGasPump,
+    FaCarCrash
 } from 'react-icons/fa';
-import { 
+import {
     PiEngineFill,
     PiSpeakerSimpleLowFill
 } from "react-icons/pi";
@@ -16,74 +16,93 @@ import AfterFireTab from './tabs/AfterFire/AfterFireTab';
 import ExhaustTab from './tabs/ExhaustTab';
 import ForcedInductionTab from './tabs/ForcedInduction/ForcedInductionTab';
 import './TabStrip.css';
+import FuelTab from './tabs/FuelTab';
 
 const tabDefinitions = [
-  { key: 'General',     icon: <PiEngineFill /> },
-  { key: 'Exhaust',     icon: <PiSpeakerSimpleLowFill /> },
-  { key: 'AfterFire',   icon: <GiCrownedExplosion  /> },
-  { key: 'Forced Induction', icon: <SiTurbo  /> },
-  { key: 'Fuel',        icon: <FaGasPump /> },
-  { key: 'ESC',         icon: <FaCarCrash /> },
-  { key: 'Sound Inject',icon: <BsSoundwave   /> }
+    { key: 'General', icon: <PiEngineFill /> },
+    { key: 'Exhaust', icon: <PiSpeakerSimpleLowFill /> },
+    { key: 'AfterFire', icon: <GiCrownedExplosion /> },
+    { key: 'Forced Induction', icon: <SiTurbo /> },
+    { key: 'Fuel', icon: <FaGasPump /> },
+    { key: 'ESC', icon: <FaCarCrash /> },
+    { key: 'Sound Inject', icon: <BsSoundwave /> }
 ];
 
 export default function TabStrip({
-  extractedData,
-  rawContent,
-  onFieldChange,
-  pendingChanges
+    parts,               // { engine, fueltank, … }
+    onFieldChange,       // (partKey, fieldKey, value)
+    pendingChanges       // { engine: {...}, fueltank: {...}, … }
 }) {
-  const [active, setActive] = useState('General');
+    const [active, setActive] = useState('General');
+    const enginePart = parts.engine     || { extracted:{}, raw: '' };
+    const fuelPart   = parts.fueltank  || { extracted:{}, raw: '' };
 
-  const renderPanel = () => {
-    switch (active) {
-      case 'General':
-        return <GeneralTab
-          extractedData={extractedData}
-          onFieldChange={onFieldChange}
-          pendingChanges={pendingChanges}
-        />;
-      case 'Exhaust':
-        return <ExhaustTab
-          extractedData={extractedData}
-          onFieldChange={onFieldChange}
-          pendingChanges={pendingChanges}
-        />;
-      case 'AfterFire':
-        return <AfterFireTab
-          extractedData={extractedData}
-          rawContent={rawContent}
-          onFieldChange={onFieldChange}
-          pendingChanges={pendingChanges}
-        />;
-      case 'Forced Induction':
-        return <ForcedInductionTab
-          extractedData={extractedData}
-          onFieldChange={onFieldChange}
-          pendingChanges={pendingChanges}
-        />;
-      default:
-        return <div  className="card" style={{fontWeight: 'bold' }}>{active} tab coming soon…</div>;
-    }
-  };
+    const renderPanel = () => {
+        switch (active) {
+            case 'General':
+                return <GeneralTab
+                    extractedData={enginePart.extracted}
+                    onFieldChange={(key, val) => onFieldChange('engine', key, val)}
+                    pendingChanges={pendingChanges.engine || {}}
+                />;
 
-  return (
-    <div className="app-container">
-      <nav className="sidebar">
-        {tabDefinitions.map(({ key, icon }) => (
-          <button
-            key={key}
-            className={`sidebar-tab${active === key ? ' active' : ''}`}
-            onClick={() => setActive(key)}
-          >
-            {icon}
-            <span className="sidebar-label">{key}</span>
-          </button>
-        ))}
-      </nav>
-      <div className="content">
-        {renderPanel()}
-      </div>
-    </div>
-  );
+            case 'Exhaust':
+                return <ExhaustTab
+                    extractedData={enginePart.extracted}
+                    onFieldChange={(key, val) => onFieldChange('engine', key, val)}
+                    pendingChanges={pendingChanges.engine || {}}
+                />;
+
+            case 'AfterFire':
+                return <AfterFireTab
+                    extractedData={enginePart.extracted}
+                    rawContent={enginePart.raw}
+                    onFieldChange={(key, val) => onFieldChange('engine', key, val)}
+                    pendingChanges={pendingChanges.engine || {}}
+                />;
+
+            case 'Forced Induction':
+                return <ForcedInductionTab
+                    extractedData={enginePart.extracted}
+                    onFieldChange={(key, val) => onFieldChange('engine', key, val)}
+                    pendingChanges={pendingChanges.engine || {}}
+                />;
+
+            case 'Fuel':
+                return <FuelTab
+                    extractedParts={{
+                        engine: enginePart.extracted,
+                        fueltank: fuelPart.extracted
+                    }}
+                    pendingChanges={{
+                        engine: pendingChanges.engine || {},
+                        fueltank: pendingChanges.fueltank || {}
+                    }}
+                    onFieldChange={onFieldChange}
+                />;
+
+            default:
+                return <div className="card" style={{ fontWeight: 'bold' }}>{active} tab coming soon…</div>;
+        }
+    };
+
+    return (
+        <div className="app-container">
+            <nav className="sidebar">
+                {tabDefinitions.map(({ key, icon }) => (
+                    <button
+                        key={key}
+                        className={`sidebar-tab${active === key ? ' active' : ''}`}
+                        onClick={() => setActive(key)}
+                    >
+                        {icon}
+                        <span className="sidebar-label">{key}</span>
+                    </button>
+                ))}
+            </nav>
+            <div className="content">
+                {renderPanel()}
+            </div>
+        </div>
+    );
 }

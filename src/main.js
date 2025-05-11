@@ -77,6 +77,16 @@ app.whenReady().then(() => {
     }
   });
 
+  ipcMain.handle('fs:writeFile', async (_evt, filePath, contents) => {
+    try {
+      await fs.promises.writeFile(filePath, contents, 'utf-8');
+      return { success: true };
+    } catch (err) {
+      console.error('writeFile error:', err);
+      return { success: false, message: err.message };
+    }
+  });
+
   //
   // PRESETS FOLDERS
   //

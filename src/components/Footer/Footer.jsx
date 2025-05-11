@@ -7,27 +7,29 @@ const { version } = pkg;
 const Footer = ({
     onApplyChanges,
     onSavePreset,
-    onOpenPresetFolder
+    onOpenPresetFolder,
+    isApplied 
 }) => (
     <footer className="footer">
         <div className="footer-credit">
-        <a
+            <a
                 href="https://github.com/ItsLoganWarner/exportomation"
                 className="footer-link"
                 target="_blank"
                 rel="noopener"
             >
-            {/* show version first, then your name as a link */}
-            v{version} — Created by{' '}
-            
+                {/* show version first, then your name as a link */}
+                v{version} — Created by{' '}
                 Logan Warner
-            
-            {' '}(Monster Energy Zero Ultra)
+                {' '}(Monster Energy Zero Ultra)
             </a>
         </div>
         <div className="footer-right">
-            <button className="footer-button-apply" onClick={onApplyChanges}>
-                Apply Changes
+            <button
+                className={`footer-button-apply${isApplied ? ' revert' : ''}`}
+                onClick={onApplyChanges}
+            >
+                {isApplied ? 'Revert' : 'Apply Changes'}
             </button>
             <button className="footer-button" onClick={onSavePreset}>
                 Save Preset
