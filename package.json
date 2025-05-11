@@ -2,7 +2,7 @@
   "name": "exportomation",
   "productName": "Exportomation",
   "version": "1.1.0",
-  "description": "My Electron application description",
+  "description": "A tool designed to simplify editing and applying presets to Automation-to-BeamNG exports",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
