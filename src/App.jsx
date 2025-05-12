@@ -126,7 +126,8 @@ const App = () => {
                         pendingChanges={pendingChanges}
                     />
                     <Footer
-                        onApplyChanges={isApplied ? handleRevert : handleApplyChanges}
+                        onApplyChanges={handleApplyChanges}
+                        onRevert={handleRevert}
                         onSavePreset={handleSavePreset}
                         onOpenPresetFolder={handleOpenPresetFolder}
                         isApplied={isApplied}

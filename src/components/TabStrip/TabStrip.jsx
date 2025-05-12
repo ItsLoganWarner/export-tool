@@ -8,9 +8,14 @@ import {
     PiSpeakerSimpleLowFill
 } from "react-icons/pi";
 import { BsSoundwave } from "react-icons/bs";
-import { GiCrownedExplosion } from "react-icons/gi";
 import { SiTurbo } from "react-icons/si";
-import { GiCarWheel, GiCartwheel } from "react-icons/gi";
+import { 
+    GiCarWheel, 
+    GiCartwheel, 
+    GiGearStick , 
+    GiCrownedExplosion,
+    GiGears 
+} from "react-icons/gi";
 
 import GeneralTab from './tabs/GeneralTab';
 import AfterFireTab from './tabs/AfterFire/AfterFireTab';
@@ -28,6 +33,8 @@ const tabDefinitions = [
     { key: 'Fuel', icon: <FaGasPump /> },
     { key: 'Front Tires', icon: <GiCartwheel /> },
     { key: 'Rear Tires', icon: <GiCarWheel /> },
+    { key: 'Transmission', icon: <GiGearStick /> },
+    { key: 'Differential', icon: <GiGears  /> },
     { key: 'ESC', icon: <FaCarCrash /> },
     { key: 'Sound Inject', icon: <BsSoundwave /> }
 ];
