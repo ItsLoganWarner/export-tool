@@ -32,43 +32,68 @@ export async function loadVehicleData(directoryPath) {
   // build array of folders to load
   const partFolders = [engineFolder, modelFolder].filter(Boolean);
 
-  // ————— Load only engine & fueltank JBEAMs —————
+  // ————— Load parts (engine, fuel tank, wheels) —————
   const parts = {};
   for (const folder of partFolders) {
     const folderPath = `${vehiclePath}/${folder}`;
     const files = await window.electron.readDirectory(folderPath);
-    let jbeamFile;
-    // engine always lives in the eng_* folder:
-    if (folder === engineFolder) {
-      jbeamFile = files.find(f => f.startsWith('camso_engine_') && f.endsWith('.jbeam'));
-    }
-    // modelFolder holds the fuel tank (and other junk we ignore):
-    else if (folder === modelFolder) {
-      jbeamFile = files.find(f => f.startsWith('camso_fueltank_') && f.endsWith('.jbeam'));
-    }
-    if (!jbeamFile) continue;
 
-    const raw = await window.electron.readFile(`${folderPath}/${jbeamFile}`);
-    const parsed = parseJbeam2(raw);
-    if (!parsed) {
-      console.warn(`Skipping ${jbeamFile}: parseJbeam2 returned null`);
+    // —— engine JBEAM (one file) ——
+    if (folder === engineFolder) {
+      const jbeamFile = files.find(f => f.startsWith('camso_engine_') && f.endsWith('.jbeam'));
+      if (jbeamFile) {
+        const raw = await window.electron.readFile(`${folderPath}/${jbeamFile}`);
+        const parsed = parseJbeam2(raw);
+        if (parsed) {
+          parts.engine = {
+            fileName: jbeamFile,
+            filePath: `${folderPath}/${jbeamFile}`,
+            raw,
+            parsed,
+            extracted: parsed.extracted
+          };
+        }
+      }
       continue;
     }
 
-    // derive a clean partKey (e.g., 'engine', 'fueltank')
-    const base = jbeamFile.replace(/^camso_/, '').replace(/\.jbeam$/, '');
-    const segments = base.split('_');
-    let partKey = segments.slice(0, -1).join('_');
-    // normalize fuel tank
-    if (partKey === 'fueltank') partKey = 'fueltank';
+    // —— modelFolder: fuel tank + front & rear wheels ——
+    if (folder === modelFolder) {
+      const jbeamFiles = files.filter(f =>
+        f.endsWith('.jbeam') &&
+        (f.startsWith('camso_fueltank_') ||
+         f.startsWith('camso_wheels_F_') ||
+         f.startsWith('camso_wheels_R_'))
+      );
 
-    parts[partKey] = {
-      fileName: jbeamFile,
-      filePath: `${folderPath}/${jbeamFile}`,
-      raw,
-      parsed,
-      extracted: parsed.extracted
-    };
+      for (const jbeamFile of jbeamFiles) {
+        const raw = await window.electron.readFile(`${folderPath}/${jbeamFile}`);
+        const parsed = parseJbeam2(raw);
+        if (!parsed) continue;
+
+        // determine partKey:
+        const base = jbeamFile.replace(/^camso_/, '').replace(/\.jbeam$/, '');
+        const seg = base.split('_');
+        let partKey;
+        if (seg[0] === 'fueltank') {
+          partKey = 'fueltank';
+        } else if (seg[0] === 'wheels' && seg[1] === 'F') {
+          partKey = 'wheels_front';
+        } else if (seg[0] === 'wheels' && seg[1] === 'R') {
+          partKey = 'wheels_rear';
+        } else {
+          partKey = seg.slice(0, -1).join('_');
+        }
+
+        parts[partKey] = {
+          fileName: jbeamFile,
+          filePath: `${folderPath}/${jbeamFile}`,
+          raw,
+          parsed,
+          extracted: parsed.extracted
+        };
+      }
+    }
   }
 
   return {

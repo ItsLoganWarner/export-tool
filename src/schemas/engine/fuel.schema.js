@@ -7,8 +7,8 @@ export default {
             tip: 'Type of fuel',
             options: ['gasoline', 'diesel', 'ethanol', 'methanol', 'nitromethane'],
             locations: {
-                engine: { regex: /"requiredEnergyType"\s*:\s*"([^"]+)"/, insertUnder: 'fuelLiquidDensity' },
-                fueltank: { regex: /"energyType"\s*:\s*"([^"]+)"/, insertUnder: 'energyType' }
+                engine: { regex: /"requiredEnergyType"\s*:\s*"([^"]+)"/, insertUnder: 'mainEngine' },
+                fueltank: { regex: /"energyType"\s*:\s*"([^"]+)"/, insertUnder: 'mainTank' }
             }
         },
         fuelLiquidDensity: {
@@ -16,8 +16,8 @@ export default {
             default: 0.76,
             tip: 'Liquid density (kg/L)',
             locations: {
-                engine: { regex: /"fuelLiquidDensity"\s*:\s*([0-9.]+)/, insertUnder: 'energyDensity' },
-                fueltank: { regex: /"fuelLiquidDensity"\s*:\s*([0-9.]+)/, insertUnder: 'energyDensity' }
+                engine: { regex: /"fuelLiquidDensity"\s*:\s*([0-9.]+)/, insertUnder: 'mainEngine' },
+                fueltank: { regex: /"fuelLiquidDensity"\s*:\s*([0-9.]+)/, insertUnder: 'mainTank' }
             }
         },
         energyDensity: {
@@ -25,8 +25,8 @@ export default {
             default: 4.64e7,
             tip: 'Energy density (J/kg)',
             locations: {
-                engine: { regex: /"energyDensity"\s*:\s*([0-9.]+)/, insertUnder: 'burnEfficiency' },
-                fueltank: { regex: /"energyDensity"\s*:\s*([0-9.]+)/, insertUnder: 'fuelCapacity' }
+                engine: { regex: /"energyDensity"\s*:\s*([0-9.]+)/, insertUnder: 'mainEngine' },
+                fueltank: { regex: /"energyDensity"\s*:\s*([0-9.]+)/, insertUnder: 'mainTank' }
             }
         },
         burnEfficiency: {
@@ -43,7 +43,7 @@ export default {
             default: 55,
             tip: 'Fuel capacity (L)',
             locations: {
-                fueltank: { regex: /"fuelCapacity"\s*:\s*([0-9.]+)/, insertUnder: 'fuelCapacity' }
+                fueltank: { regex: /"fuelCapacity"\s*:\s*([0-9.]+)/, insertUnder: 'mainTank' }
             },
             postUpdate: (lines, newValue) => {
                 const fc = newValue;
