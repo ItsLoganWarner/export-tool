@@ -8,7 +8,8 @@ const Footer = ({
     onApplyChanges,
     onSavePreset,
     onOpenPresetFolder,
-    isApplied 
+    onRevert,
+    isApplied
 }) => (
     <footer className="footer">
         <div className="footer-credit">
@@ -25,11 +26,19 @@ const Footer = ({
             </a>
         </div>
         <div className="footer-right">
+            {isApplied && (
+              <button
+                className="footer-button-revert"
+                onClick={onRevert}
+              >
+                Revert
+              </button>
+            )}
             <button
-                className={`footer-button-apply${isApplied ? ' revert' : ''}`}
+                className="footer-button-apply"
                 onClick={onApplyChanges}
             >
-                {isApplied ? 'Revert' : 'Apply Changes'}
+              Apply Changes
             </button>
             <button className="footer-button" onClick={onSavePreset}>
                 Save Preset

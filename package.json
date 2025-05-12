@@ -1,7 +1,7 @@
 {
   "name": "exportomation",
   "productName": "Exportomation",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A tool designed to simplify editing and applying presets to Automation-to-BeamNG exports",
   "main": ".webpack/main",
   "scripts": {
