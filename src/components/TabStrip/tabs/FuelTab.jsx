@@ -1,6 +1,8 @@
 // src/components/Tabs/tabs/FuelTab.jsx
 import React, { useState, useEffect } from 'react';
 import fuelSchema from '../../../schemas/engine/fuel.schema';
+import "../../../styles/Tabs.css";
+
 
 export default function FuelTab({
   extractedParts: { engine, fueltank },
@@ -106,7 +108,7 @@ export default function FuelTab({
   return (
     <div className="card">
       {Object.entries(fields).map(([key, def]) => (
-        <div key={key} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+        <div key={key} className="field-row">
           <input
             type="checkbox"
             checked={checked[key] || false}
@@ -149,6 +151,7 @@ export default function FuelTab({
               style={{ marginLeft: 10, width: def.type === 'number' ? 100 : 200 }}
             />
           )}
+          <div className="tooltip">{def.tip}</div>
         </div>
       ))}
     </div>

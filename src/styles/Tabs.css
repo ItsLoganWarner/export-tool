@@ -1,0 +1,32 @@
+/* src/components/Tabs/Tabs.css */
+.field-row {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  .field-row .tooltip {
+    position: absolute;
+    left: 360px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.8);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition);
+    font-size: 0.85rem;
+    z-index: 10;
+  }
+  
+  .field-row:hover .tooltip {
+    opacity: 1;
+  }
+  
+  .field-row .tooltip:empty {
+    display: none;
+  }

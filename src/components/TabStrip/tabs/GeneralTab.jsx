@@ -1,6 +1,7 @@
 // src/components/Tabs/tabs/GeneralTab.jsx
 import React, { useState, useEffect } from 'react';
 import generalSchema from '../../../schemas/engine/general.schema';
+import "../../../styles/Tabs.css";
 
 const GeneralTab = ({ extractedData, onFieldChange, pendingChanges = {}}) => {
   const [checked, setChecked] = useState({});
@@ -59,7 +60,7 @@ const GeneralTab = ({ extractedData, onFieldChange, pendingChanges = {}}) => {
   return (
     <div className="card">
       {Object.entries(generalSchema.fields).map(([key, { type, tip }]) => (
-        <div key={key} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+        <div key={key} className="field-row">
           <input
             type="checkbox"
             checked={checked[key] || false}
@@ -94,6 +95,7 @@ const GeneralTab = ({ extractedData, onFieldChange, pendingChanges = {}}) => {
               style={{ width: 200, marginLeft: 10 }}
             />
           )}
+          <div className="tooltip">{tip}</div>
         </div>
       ))}
     </div>

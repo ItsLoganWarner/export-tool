@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import turboSchema from '../../../../schemas/engine/forcedInduction/turbocharger.schema.js';
 import superSchema from '../../../../schemas/engine/forcedInduction/supercharger.schema.js';
 import { forcedInductionSounds } from './forcedInductionOptions.js';
+import "../../../../styles/Tabs.css";
+
 
 const ForcedInductionTab = ({ extractedData, onFieldChange, pendingChanges= {} }) => {
   const hasTurbo = 'bovSoundFileName' in extractedData;
@@ -88,7 +90,7 @@ const ForcedInductionTab = ({ extractedData, onFieldChange, pendingChanges= {} }
     <div className="card">
       <h3 style={{ marginTop: 20, borderBottom: '1px solid #333' }}>{label}</h3>
       {Object.entries(fields).map(([key, def]) => (
-        <div key={key} style={{ display: 'flex', alignItems: 'center', marginBottom: 10 }}>
+        <div key={key} className="field-row">
           <input
             type="checkbox"
             checked={checked[key] || false}
@@ -132,6 +134,7 @@ const ForcedInductionTab = ({ extractedData, onFieldChange, pendingChanges= {} }
               }}
             />
           )}
+          <div className="tooltip">{def.tip}</div>
         </div>
       ))}
     </div>

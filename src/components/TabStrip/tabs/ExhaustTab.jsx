@@ -1,6 +1,8 @@
 // src/components/Tabs/tabs/ExhaustTab.jsx
 import React, { useState, useEffect } from 'react';
 import exhaustSchema from '../../../schemas/engine/exhaust.schema';
+import "../../../styles/Tabs.css";
+
 
 const ExhaustTab = ({ extractedData, onFieldChange, pendingChanges= {} }) => {
   const [checked, setChecked] = useState({});
@@ -63,7 +65,7 @@ const ExhaustTab = ({ extractedData, onFieldChange, pendingChanges= {} }) => {
   return (
     <div className="card">
       {Object.entries(exhaustSchema.fields).map(([key, { type, tip }]) => (
-        <div key={key} style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+        <div key={key} className="field-row">
           <input
             type="checkbox"
             checked={checked[key] || false}
@@ -99,6 +101,7 @@ const ExhaustTab = ({ extractedData, onFieldChange, pendingChanges= {} }) => {
               style={{ width: 200, marginLeft: 10 }}
             />
           )}
+          <div className="tooltip">{tip}</div>
         </div>
       ))}
     </div>

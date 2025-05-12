@@ -21,7 +21,7 @@ import GeneralTab from './tabs/GeneralTab';
 import AfterFireTab from './tabs/AfterFire/AfterFireTab';
 import ExhaustTab from './tabs/ExhaustTab';
 import ForcedInductionTab from './tabs/ForcedInduction/ForcedInductionTab';
-import './TabStrip.css';
+import '../../styles/TabStrip.css';
 import FuelTab from './tabs/FuelTab';
 import TiresTab from './tabs/TiresTab';
 
