@@ -29,6 +29,11 @@ export function parseJbeam2(rawContent) {
       const loc = def.locations?.[partType];
       if (!loc) continue;
 
+      // If there’s an insertUnder anchor, record its first position
+      const anchorPos = loc.insertUnder
+        ? content.indexOf(`"${loc.insertUnder}"`)
+        : -1;
+
       // 🎯 Textarea (burnEfficiency) needs manual bracket-matching
       if (def.type === 'textarea') {
         // manually bracket-match the full array
@@ -58,8 +63,14 @@ export function parseJbeam2(rawContent) {
         continue;
       }
 
-      // everything else via regex
-      const m = content.match(loc.regex);
+      // everything else via regex, but only if it occurs after insertUnder
+      const regex = new RegExp(loc.regex.source, loc.regex.flags);
+      let m = regex.exec(content);
+      if (m && anchorPos >= 0 && m.index < anchorPos) {
+        // we found a match, but it’s before the anchor → ignore it
+        m = null;
+      }
+
       let v = m
         ? m[1]
         : (def.canBeMissing ? def.default : null);

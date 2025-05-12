@@ -10,6 +10,7 @@ import {
 import { BsSoundwave } from "react-icons/bs";
 import { GiCrownedExplosion } from "react-icons/gi";
 import { SiTurbo } from "react-icons/si";
+import { GiCarWheel, GiCartwheel } from "react-icons/gi";
 
 import GeneralTab from './tabs/GeneralTab';
 import AfterFireTab from './tabs/AfterFire/AfterFireTab';
@@ -17,6 +18,7 @@ import ExhaustTab from './tabs/ExhaustTab';
 import ForcedInductionTab from './tabs/ForcedInduction/ForcedInductionTab';
 import './TabStrip.css';
 import FuelTab from './tabs/FuelTab';
+import TiresTab from './tabs/TiresTab';
 
 const tabDefinitions = [
     { key: 'General', icon: <PiEngineFill /> },
@@ -24,18 +26,22 @@ const tabDefinitions = [
     { key: 'AfterFire', icon: <GiCrownedExplosion /> },
     { key: 'Forced Induction', icon: <SiTurbo /> },
     { key: 'Fuel', icon: <FaGasPump /> },
+    { key: 'Front Tires', icon: <GiCartwheel /> },
+    { key: 'Rear Tires', icon: <GiCarWheel /> },
     { key: 'ESC', icon: <FaCarCrash /> },
     { key: 'Sound Inject', icon: <BsSoundwave /> }
 ];
 
 export default function TabStrip({
-    parts,               // { engine, fueltank, … }
+    parts,               // { engine, fueltank, wheels_front, wheels_rear, … }
     onFieldChange,       // (partKey, fieldKey, value)
-    pendingChanges       // { engine: {...}, fueltank: {...}, … }
+    pendingChanges       // { engine: {...}, fueltank: {...}, wheels_front: {...}, wheels_rear: {...}, … }
 }) {
     const [active, setActive] = useState('General');
-    const enginePart = parts.engine     || { extracted:{}, raw: '' };
-    const fuelPart   = parts.fueltank  || { extracted:{}, raw: '' };
+    const enginePart = parts.engine || { extracted: {}, raw: '' };
+    const fuelPart = parts.fueltank || { extracted: {}, raw: '' };
+    const frontTirePart = parts.wheels_front || { extracted: {}, raw: '' };
+    const rearTirePart = parts.wheels_rear || { extracted: {}, raw: '' };
 
     const renderPanel = () => {
         switch (active) {
@@ -79,6 +85,20 @@ export default function TabStrip({
                         fueltank: pendingChanges.fueltank || {}
                     }}
                     onFieldChange={onFieldChange}
+                />;
+
+            case 'Front Tires':
+                return <TiresTab
+                    extractedData={frontTirePart.extracted}
+                    pendingChanges={pendingChanges.wheels_front || {}}
+                    onFieldChange={(key, val) => onFieldChange('wheels_front', key, val)}
+                />;
+
+            case 'Rear Tires':
+                return <TiresTab
+                    extractedData={rearTirePart.extracted}
+                    pendingChanges={pendingChanges.wheels_rear || {}}
+                    onFieldChange={(key, val) => onFieldChange('wheels_rear', key, val)}
                 />;
 
             default:
