@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import wheelsSchema from '../../../schemas/engine/wheels.schema';
+import "../../../styles/Tabs.css";
+
 
 export default function TiresTab({
   extractedData,
@@ -55,7 +57,7 @@ export default function TiresTab({
   return (
     <div className="card">
       {Object.entries(fields).map(([key, def]) => (
-        <div key={key} style={{ display:'flex', alignItems:'center', marginBottom:8 }}>
+        <div key={key} className="field-row">
           <input
             type="checkbox"
             checked={checked[key]||false}
@@ -72,6 +74,7 @@ export default function TiresTab({
             onChange={e => changeValue(key, e.target.value)}
             style={{ width:100, marginLeft:10 }}
           />
+          <div className="tooltip">{def.tip}</div>
         </div>
       ))}
     </div>
