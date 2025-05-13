@@ -30,5 +30,8 @@
     "requiredEnergyType": "diesel",
     "fuelLiquidDensity": 0.84,
     "energyDensity": 45000000
+  },
+  "infoTrim": {
+    "fuelType": "Diesel"
   }
 }
