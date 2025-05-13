@@ -2,14 +2,15 @@
 import React, { useState } from 'react';
 import Header from './components/Header/Header';
 import TabStrip from './components/TabStrip/TabStrip';
-import { loadVehicleData } from './utils/loadVehicleData'; // Assuming this is a utility function to load vehicle data
+import MetaTab from './components/MetaTab';
 import Footer from './components/Footer/Footer';
 
-const App = () => {
+export default function App() {
     const [vehicleData, setVehicleData] = useState(null);
     const [isReady, setIsReady] = useState(false);
     const [pendingChanges, setPendingChanges] = useState({});
     const [isApplied, setIsApplied] = useState(false);
+    const [activeView, setActiveView] = useState('General'); // could be 'General', 'Exhaust', or 'Meta'
 
     // 1) Field edits (remove key if null/undefined)
     const handleFieldChange = (partKey, key, value) => {
@@ -19,6 +20,7 @@ const App = () => {
             else part[key] = value;
             return { ...prev, [partKey]: part };
         });
+        console.log('Pending changes:', pendingChanges);
     };
 
     // 2) Write to disk
@@ -26,7 +28,7 @@ const App = () => {
         for (const [part, changes] of Object.entries(pendingChanges)) {
             if (!Object.keys(changes).length) continue;
             const path = vehicleData.parts[part].filePath;
-            const res = await window.electron.applyChanges(path, changes);
+            const res = await window.electron.applyChanges(path, part, changes);;
             if (!res.success) {
                 return alert(`Failed on ${part}: ${res.message}`);
             }
@@ -40,6 +42,7 @@ const App = () => {
         setVehicleData(data);
         setPendingChanges({});
         setIsApplied(false);
+        setActiveView('General');
         setIsReady(true);
     };
 
@@ -68,17 +71,13 @@ const App = () => {
     };
 
     // 6) Save the current pendingChanges as a custom preset
-    //    but patch in the raw textarea string for burnEfficiency
     const handleSavePreset = async () => {
-        // Make a shallow copy
         const toSave = { ...pendingChanges };
-        // If the engine has burnEfficiency, pull it from the FuelTab's values
         const fuelTab = document.querySelector('textarea[name="burnEfficiency"]');
         if (toSave.engine?.burnEfficiency && fuelTab) {
             toSave.engine.burnEfficiency = fuelTab.value
                 .split('\n')
                 .map(line => line.trim().replace(/,$/, ''));
-            // now it's an array of strings like "[0.00, 1.00]"
         }
 
         const fileName = await window.presets.save(toSave);
@@ -92,7 +91,6 @@ const App = () => {
 
     // Revert changes by writing original raw text back to files
     const handleRevert = async () => {
-        // Write each part's original raw text back to its file
         for (const [partKey, part] of Object.entries(vehicleData.parts)) {
             const original = part.raw || part.parsed.raw;
             const { success, message } = await window.electron.writeFile(part.filePath, original);
@@ -100,7 +98,6 @@ const App = () => {
                 return alert(`Failed to revert ${partKey}: ${message}`);
             }
         }
-        // Clear UI diffs & flip back
         setPendingChanges({});
         setIsApplied(false);
     };
@@ -110,23 +107,45 @@ const App = () => {
             <Header
                 isReady={isReady}
                 setIsReady={setIsReady}
-                setVehicleData={handleNewVehicle}
+                setVehicleData={data => {
+                    setVehicleData(data);
+                    setPendingChanges({});
+                    setActiveView('General');
+                }}
                 vehicleData={vehicleData}
                 onLoadBuiltIn={handleLoadBuiltIn}
                 onAppendBuiltIn={handleAppendBuiltIn}
                 onLoadUser={handleLoadUser}
                 onAppendUser={handleAppendUser}
+                onEditMetadata={() => setActiveView('Meta')}
             />
 
             {isReady && vehicleData && (
                 <>
-                    <TabStrip
-                        parts={vehicleData.parts}
-                        onFieldChange={handleFieldChange}
-                        pendingChanges={pendingChanges}
-                    />
+                    {activeView === 'Meta' ? (
+                        // Full-screen Metadata editor for both Model & Trim
+                        <MetaTab
+                            modelExtracted={vehicleData.parts.infoModel.extracted}
+                            modelPending={pendingChanges.infoModel || {}}
+                            trimExtracted={vehicleData.parts.infoTrim.extracted}
+                            trimPending={pendingChanges.infoTrim || {}}
+                            onFieldChange={handleFieldChange}
+                            onExit={() => setActiveView('General')} // ← back to tabs
+                        />
+                    ) : (
+                        // Normal sidebar + content tabs
+                        <>
+                            <TabStrip
+                                parts={vehicleData.parts}
+                                onFieldChange={handleFieldChange}
+                                pendingChanges={pendingChanges}
+                                active={activeView} // ← controlled
+                                onTabChange={setActiveView} // ← controlled
+                            />
+                        </>
+                    )}
                     <Footer
-                        onApplyChanges={handleApplyChanges}
+                        onApply={handleApplyChanges}
                         onRevert={handleRevert}
                         onSavePreset={handleSavePreset}
                         onOpenPresetFolder={handleOpenPresetFolder}
@@ -136,6 +155,4 @@ const App = () => {
             )}
         </div>
     );
-};
-
-export default App;
+}

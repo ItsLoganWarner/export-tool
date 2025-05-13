@@ -4,8 +4,8 @@ contextBridge.exposeInMainWorld('electron', {
   openDirectory: () => ipcRenderer.invoke('dialog:openDirectory'),
   readDirectory: (directoryPath) => ipcRenderer.invoke('fs:readDirectory', directoryPath),
   readFile: (filePath) => ipcRenderer.invoke('fs:readFile', filePath),
-  applyChanges: (filePath, pendingChanges) =>
-    ipcRenderer.invoke('jbeam:applyChanges', { filePath, pendingChanges }),
+  applyChanges: (filePath, partKey, pendingChanges) =>
+    ipcRenderer.invoke('jbeam:applyChanges', { filePath, partKey, pendingChanges }),
   writeFile: (filePath, contents) => ipcRenderer.invoke('fs:writeFile', filePath, contents),
 });
 

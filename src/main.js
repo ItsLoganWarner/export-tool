@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron'; // Updated to include `shell`
 import path from 'node:path';
 import fs from 'fs';
-import { updateJbeam } from './utils/updateJbeam.js';
+import { updatePart } from './utils/updateRegistry.js'; // Updated import
 import builtInPresets from './utils/builtInPresets.js'  // Import built-in presets
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -65,10 +65,10 @@ app.whenReady().then(() => {
   });
 
   // Add the jbeam:applyChanges IPC channel
-  ipcMain.handle('jbeam:applyChanges', async (event, { filePath, pendingChanges }) => {
+  ipcMain.handle('jbeam:applyChanges', async (event, { filePath, partKey, pendingChanges }) => {
     try {
       let raw = await fs.promises.readFile(filePath, 'utf-8');
-      const updated = updateJbeam(raw, pendingChanges);
+      const updated = updatePart(raw, pendingChanges, partKey);
       await fs.promises.writeFile(filePath, updated, 'utf-8');
       return { success: true };
     } catch (err) {
@@ -123,7 +123,6 @@ app.whenReady().then(() => {
     fs.writeFileSync(fp, JSON.stringify(data, null, 2), 'utf-8');
   });
 
-
   // List all .json in both dirs
   ipcMain.handle('presets:list', async () => {
     const [builtIn, custom] = await Promise.all([
@@ -135,7 +134,6 @@ app.whenReady().then(() => {
       custom: custom.filter(f => f.endsWith('.json')),
     };
   });
-
 
   // Load one preset
   ipcMain.handle('presets:load', async (_evt, which, name) => {

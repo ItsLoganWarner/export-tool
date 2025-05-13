@@ -6,6 +6,8 @@ import turbo from '../schemas/engine/forcedInduction/turbocharger.schema';
 import superchrg from '../schemas/engine/forcedInduction/supercharger.schema';
 import fuelSchema from '../schemas/engine/fuel.schema';
 import wheelsSchema from '../schemas/engine/wheels.schema';
+import infoModelSchema from '../schemas/infoModel.schema';
+import infoTrimSchema  from '../schemas/infoTrim.schema';
 
 // const allSchemas = { general, exhaust, afterfire, turbo, superchrg, fuelSchema };
 
@@ -27,5 +29,7 @@ export function getSchemasForPart(partKey, rawContent) {
     ) {
         out.push(wheelsSchema);
     }
+    if (normalized === 'infomodel') out.push(infoModelSchema);
+    if (normalized === 'infotrim') out.push(infoTrimSchema);
     return out;
 }
