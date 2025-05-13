@@ -9,6 +9,7 @@ export default function Header({
   setIsReady,
   setVehicleData,
   vehicleData,
+  pendingChanges,   // ← now passed from App.jsx
   onLoadBuiltIn,
   onAppendBuiltIn,
   onLoadUser,
@@ -18,7 +19,7 @@ export default function Header({
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef();
 
-  // close dropdown on outside click
+  // Close dropdown on outside click
   useEffect(() => {
     const onBodyClick = e => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -38,15 +39,26 @@ export default function Header({
     setIsReady(true);
   };
 
-  // pulled from infoTrim.extracted via your JSON parser
-  const trimInfo = vehicleData?.parts?.infoTrim?.extracted || {};
-  const year     = trimInfo.year || '';
-  const trimName = trimInfo.configuration || '';
+  // ——— Model override (if you added `modelName` to your infoModel.schema) ———
+  const defaultModel = vehicleData?.modelName || '';
+  const modelPending = pendingChanges.infoModel?.modelName;
+  let displayModel = modelPending ?? defaultModel;
 
-  // strip duplicate trimName out of modelName
-  let model = vehicleData?.modelName || '';
-  if (trimName && model.toLowerCase().includes(trimName.toLowerCase())) {
-    model = model.replace(new RegExp(trimName, 'i'), '').trim();
+  // ——— Trim & Year override ———
+  const infoTrim      = vehicleData?.parts?.infoTrim?.extracted || {};
+  const defaultTrim   = infoTrim.configuration  || '';
+  const defaultYear   = infoTrim.year           || '';
+
+  const trimPending   = pendingChanges.infoTrim || {};
+  const displayTrim   = trimPending.configuration ?? defaultTrim;
+  const displayYear   = (trimPending.year != null ? trimPending.year : defaultYear);
+
+  // strip duplicate trim name out of model
+  if (displayTrim && displayModel.toLowerCase().includes(displayTrim.toLowerCase())) {
+    displayModel = displayModel.replace(
+      new RegExp(displayTrim, 'i'),
+      ''
+    ).trim();
   }
 
   return (
@@ -62,7 +74,7 @@ export default function Header({
         {isReady ? (
           <>
             <div className="title-line">
-              {year} <strong>{model}</strong> {trimName}
+              {displayYear} <strong>{displayModel}</strong> {displayTrim}
             </div>
             <button className="btn edit-meta" onClick={onEditMetadata}>
               <FaEdit style={{ marginRight: 4 }} /> Edit Metadata
@@ -109,5 +121,5 @@ export default function Header({
         )}
       </div>
     </header>
-);
+  );
 }

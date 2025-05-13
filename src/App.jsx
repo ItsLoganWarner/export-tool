@@ -113,6 +113,7 @@ export default function App() {
                     setActiveView('General');
                 }}
                 vehicleData={vehicleData}
+                pendingChanges={pendingChanges}
                 onLoadBuiltIn={handleLoadBuiltIn}
                 onAppendBuiltIn={handleAppendBuiltIn}
                 onLoadUser={handleLoadUser}
