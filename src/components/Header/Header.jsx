@@ -33,21 +33,18 @@ export default function Header({
     const dir = await window.electron.openDirectory();
     if (!dir) return;
     const data = await loadVehicleData(dir);
-    console.log('Loaded vehicle data:', data);
     if (!data) return;
     setVehicleData(data);
     setIsReady(true);
   };
 
-  // pull out your extracted trim info
+  // pulled from infoTrim.extracted via your JSON parser
   const trimInfo = vehicleData?.parts?.infoTrim?.extracted || {};
-  const year      = trimInfo.year || '';
-  const trimName  = trimInfo.configuration || '';        // your schema’s “configuration” field
+  const year     = trimInfo.year || '';
+  const trimName = trimInfo.configuration || '';
 
-  // get the raw modelName
+  // strip duplicate trimName out of modelName
   let model = vehicleData?.modelName || '';
-
-  // if modelName contains the trimName as substring, strip it out
   if (trimName && model.toLowerCase().includes(trimName.toLowerCase())) {
     model = model.replace(new RegExp(trimName, 'i'), '').trim();
   }
@@ -82,10 +79,35 @@ export default function Header({
         </button>
         {open && (
           <div className="preset-dropdown">
-            {/* … your existing presets rows … */}
+            <div className="preset-row">
+              <span className="preset-label">Built-In</span>
+              <FaSyncAlt
+                className="preset-action"
+                title="Load Built-In Preset"
+                onClick={() => { setOpen(false); onLoadBuiltIn(); }}
+              />
+              <FaPlus
+                className="preset-action"
+                title="Add Built-In Preset"
+                onClick={() => { setOpen(false); onAppendBuiltIn(); }}
+              />
+            </div>
+            <div className="preset-row">
+              <span className="preset-label">User</span>
+              <FaSyncAlt
+                className="preset-action"
+                title="Load User Preset"
+                onClick={() => { setOpen(false); onLoadUser(); }}
+              />
+              <FaPlus
+                className="preset-action"
+                title="Add User Preset"
+                onClick={() => { setOpen(false); onAppendUser(); }}
+              />
+            </div>
           </div>
         )}
       </div>
     </header>
-  );
+);
 }

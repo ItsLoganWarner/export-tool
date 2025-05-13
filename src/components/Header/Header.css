@@ -1,9 +1,11 @@
+/* src/components/Header/Header.css */
+
+/* === Header Container === */
 .app-header {
     display: flex;
     align-items: center;
     padding: 0 1rem;
     min-height: 3.5rem;
-    /* or whatever exact height you prefer */
     box-sizing: border-box;
     background: linear-gradient(to right, #81C4FF, #16588E, #E7222E);
     color: white;
@@ -11,6 +13,13 @@
     z-index: 20;
 }
 
+/* Allow dropdown to overflow out of header */
+.app-header,
+.header-right {
+    overflow: visible;
+}
+
+/* === Header Sections === */
 .header-left,
 .header-center,
 .header-right {
@@ -34,7 +43,7 @@
     position: relative;
 }
 
-/* ===== Car button ===== */
+/* === “Select Car” Button === */
 .btn {
     background: none;
     border: 2px solid white;
@@ -51,33 +60,29 @@
     color: #16588E;
 }
 
-/* icon only until hover */
+/* compact icon-only state until hover */
 .select-car {
-    padding-top: 0.4em;
-    padding-bottom: 0.4em;
-    padding-left: 0.4em;
-    padding-right: 0.4em;
+    padding: 0.4em;
     transition: padding 0.3s ease;
 }
 
-/* hide the text until hover */
+/* hide text until hover */
 .select-car .label {
     display: none;
     margin-left: 0.5em;
     white-space: nowrap;
 }
 
-/* on hover, expand the padding & show the label */
+/* on hover, expand & show text */
 .select-car:hover {
-    padding-left: 1em;
-    padding-right: 1em;
+    padding: 0.4em 1em;
 }
 
 .select-car:hover .label {
     display: inline-block;
 }
 
-/* center title lines */
+/* === Title & Edit Meta === */
 .title-line {
     line-height: 1.2;
     margin: 0.1em 0;
@@ -95,19 +100,20 @@
     border-radius: 4px;
     cursor: pointer;
     transition: background 0.2s, color 0.2s;
-  }
-  .header-center .edit-meta:hover {
+}
+
+.header-center .edit-meta:hover {
     background: #16588E;
     color: white;
-  }
+}
 
-/* dimmed state */
+/* === Dimmed State === */
 .dimmed {
     color: #eee;
     font-style: italic;
 }
 
-/* ===== Presets pill ===== */
+/* === Presets Button === */
 .presets-btn {
     background: white;
     color: #16588E;
@@ -123,7 +129,7 @@
     color: white;
 }
 
-/* ===== Dropdown menu ===== */
+/* === Presets Dropdown (consolidated) === */
 .preset-dropdown {
     position: absolute;
     top: 110%;
@@ -132,11 +138,13 @@
     border: 1px solid #ccc;
     border-radius: 6px;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-    overflow: hidden;
-    z-index: 30;
+    z-index: 10000; /* high above everything */
     min-width: 180px;
+    max-height: calc(100vh - 4rem); /* never taller than viewport minus header */
+    overflow-y: auto; /* scroll if it does */
 }
 
+/* === Dropdown Rows & Actions === */
 .preset-row {
     display: flex;
     align-items: center;
