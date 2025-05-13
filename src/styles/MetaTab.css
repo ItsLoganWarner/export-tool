@@ -1,0 +1,61 @@
+/* src/styles/MetaTab.css */
+
+.meta-container {
+    padding: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.back-btn {
+    background: var(--m-blue);
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.field-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.field-label {
+    width: 180px;
+    font-weight: bold;
+    margin: 0 0.5rem;
+}
+
+.back-btn:hover {
+    opacity: 0.9;
+}
+
+.meta-container .field-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  
+  /* make all of your labels the same width */
+  .meta-container .field-row .field-label {
+    /* match the 180px you used elsewhere */
+    flex: 0 0 180px;
+    font-weight: bold;
+  }
+  
+  /* number inputs are nice and narrow */
+  .meta-container .field-row input[type="number"] {
+    flex: 0 0 190px;
+    margin-left: 10px;
+  }
+  
+  /* text inputs and selects a bit wider */
+  .meta-container .field-row input[type="text"],
+  .meta-container .field-row select {
+    flex: 0 0 200px;
+    margin-left: 10px;
+  }
+  

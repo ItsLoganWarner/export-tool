@@ -5,10 +5,10 @@ import pkg from '../../../package.json';
 const { version } = pkg;
 
 const Footer = ({
-    onApplyChanges,
+    onApply,
+    onRevert,
     onSavePreset,
     onOpenPresetFolder,
-    onRevert,
     isApplied
 }) => (
     <footer className="footer">
@@ -27,18 +27,12 @@ const Footer = ({
         </div>
         <div className="footer-right">
             {isApplied && (
-              <button
-                className="footer-button-revert"
-                onClick={onRevert}
-              >
-                Revert
-              </button>
+                <button className="footer-button-revert" onClick={onRevert}>
+                    Revert
+                </button>
             )}
-            <button
-                className="footer-button-apply"
-                onClick={onApplyChanges}
-            >
-              Apply Changes
+            <button className="footer-button-apply" onClick={onApply}>
+                Apply Changes
             </button>
             <button className="footer-button" onClick={onSavePreset}>
                 Save Preset

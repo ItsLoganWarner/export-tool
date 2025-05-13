@@ -1,5 +1,6 @@
+// src/components/Header/Header.jsx
 import React, { useState, useRef, useEffect } from 'react';
-import { FaCar, FaSyncAlt, FaPlus } from 'react-icons/fa';
+import { FaCar, FaSyncAlt, FaPlus, FaEdit } from 'react-icons/fa';
 import { loadVehicleData } from '../../utils/loadVehicleData';
 import './Header.css';
 
@@ -11,7 +12,8 @@ export default function Header({
   onLoadBuiltIn,
   onAppendBuiltIn,
   onLoadUser,
-  onAppendUser
+  onAppendUser,
+  onEditMetadata
 }) {
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef();
@@ -31,19 +33,29 @@ export default function Header({
     const dir = await window.electron.openDirectory();
     if (!dir) return;
     const data = await loadVehicleData(dir);
+    console.log('Loaded vehicle data:', data);
     if (!data) return;
     setVehicleData(data);
-    console.log('Loaded vehicle data:', data);
     setIsReady(true);
   };
+
+  // pull out your extracted trim info
+  const trimInfo = vehicleData?.parts?.infoTrim?.extracted || {};
+  const year      = trimInfo.year || '';
+  const trimName  = trimInfo.configuration || '';        // your schema’s “configuration” field
+
+  // get the raw modelName
+  let model = vehicleData?.modelName || '';
+
+  // if modelName contains the trimName as substring, strip it out
+  if (trimName && model.toLowerCase().includes(trimName.toLowerCase())) {
+    model = model.replace(new RegExp(trimName, 'i'), '').trim();
+  }
 
   return (
     <header className="app-header">
       <div className="header-left">
-        <button
-          className="btn select-car"
-          onClick={handleSelectDirectory}
-        >
+        <button className="btn select-car" onClick={handleSelectDirectory}>
           <FaCar className="icon-car" />
           <span className="label">Select Car Export</span>
         </button>
@@ -53,11 +65,11 @@ export default function Header({
         {isReady ? (
           <>
             <div className="title-line">
-              Car: <strong>{vehicleData.modelName}</strong>
+              {year} <strong>{model}</strong> {trimName}
             </div>
-            <div className="title-line">
-              Engine: <strong>{vehicleData.parts.engine?.fileName}</strong>
-            </div>
+            <button className="btn edit-meta" onClick={onEditMetadata}>
+              <FaEdit style={{ marginRight: 4 }} /> Edit Metadata
+            </button>
           </>
         ) : (
           <div className="dimmed">No vehicle loaded</div>
@@ -65,40 +77,12 @@ export default function Header({
       </div>
 
       <div className="header-right" ref={dropdownRef}>
-        <button
-          className="btn presets-btn"
-          onClick={() => setOpen(o => !o)}
-        >
+        <button className="btn presets-btn" onClick={() => setOpen(o => !o)}>
           Presets ▾
         </button>
         {open && (
           <div className="preset-dropdown">
-            <div className="preset-row">
-              <span className="preset-label">Built-In</span>
-              <FaSyncAlt
-                className="preset-action"
-                title="Load Built-In Preset"
-                onClick={() => { setOpen(false); onLoadBuiltIn(); }}
-              />
-              <FaPlus
-                className="preset-action"
-                title="Add Built-In Preset"
-                onClick={() => { setOpen(false); onAppendBuiltIn(); }}
-              />
-            </div>
-            <div className="preset-row">
-              <span className="preset-label">User</span>
-              <FaSyncAlt
-                className="preset-action"
-                title="Load User Preset"
-                onClick={() => { setOpen(false); onLoadUser(); }}
-              />
-              <FaPlus
-                className="preset-action"
-                title="Add User Preset"
-                onClick={() => { setOpen(false); onAppendUser(); }}
-              />
-            </div>
+            {/* … your existing presets rows … */}
           </div>
         )}
       </div>

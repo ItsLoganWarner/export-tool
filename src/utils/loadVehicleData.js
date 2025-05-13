@@ -1,5 +1,6 @@
 // src/utils/loadVehicleData.js
-import { parseJbeam2 } from './jbeamParser2';
+import { parsePart }   from './parserRegistry';
+import { parseJsonPart } from './jsonParser.js';
 
 export async function loadVehicleData(directoryPath) {
   const vehiclesPath = `${directoryPath}/vehicles`;
@@ -43,7 +44,7 @@ export async function loadVehicleData(directoryPath) {
       const jbeamFile = files.find(f => f.startsWith('camso_engine_') && f.endsWith('.jbeam'));
       if (jbeamFile) {
         const raw = await window.electron.readFile(`${folderPath}/${jbeamFile}`);
-        const parsed = parseJbeam2(raw);
+        const parsed = parsePart(raw, jbeamFile);;
         if (parsed) {
           parts.engine = {
             fileName: jbeamFile,
@@ -68,7 +69,7 @@ export async function loadVehicleData(directoryPath) {
 
       for (const jbeamFile of jbeamFiles) {
         const raw = await window.electron.readFile(`${folderPath}/${jbeamFile}`);
-        const parsed = parseJbeam2(raw);
+        const parsed = parsePart(raw, jbeamFile);
         if (!parsed) continue;
 
         // determine partKey:
@@ -95,6 +96,25 @@ export async function loadVehicleData(directoryPath) {
       }
     }
   }
+    // ————— Load info.json as “infoModel” —————
+    const infoRaw = await window.electron.readFile(`${vehiclePath}/info.json`);
+    const infoPart = parseJsonPart(infoRaw, 'infoModel');
+    parts.infoModel = {
+      ...infoPart,
+      fileName: 'info.json',
+      filePath: `${vehiclePath}/info.json`
+    };
+  
+    // ————— Load info_<modelFolder>.json as “infoTrim” —————
+    const trimRaw = await window.electron.readFile(
+      `${vehiclePath}/info_${modelFolder}.json`
+    );
+    const trimPart = parseJsonPart(trimRaw, 'infoTrim');
+    parts.infoTrim = {
+      ...trimPart,
+      fileName: `info_${modelFolder}.json`,
+      filePath: `${vehiclePath}/info_${modelFolder}.json`
+    };
 
   return {
     directoryPath,

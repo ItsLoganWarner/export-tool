@@ -1,3 +1,4 @@
+// components/TabStrip/TabStrip.jsx
 import React, { useState } from 'react';
 import {
     FaGasPump,
@@ -42,9 +43,15 @@ const tabDefinitions = [
 export default function TabStrip({
     parts,               // { engine, fueltank, wheels_front, wheels_rear, … }
     onFieldChange,       // (partKey, fieldKey, value)
-    pendingChanges       // { engine: {...}, fueltank: {...}, wheels_front: {...}, wheels_rear: {...}, … }
+    pendingChanges,      // { engine: {...}, fueltank: {...}, wheels_front: {...}, wheels_rear: {...}, … }
+    active: activeProp,  // controlled active tab
+    onTabChange          // controlled tab change handler
 }) {
-    const [active, setActive] = useState('General');
+    // fallback
+    const [internal, setInternal] = useState('General');
+    const active = activeProp || internal;
+    const setActive = onTabChange || setInternal;
+
     const enginePart = parts.engine || { extracted: {}, raw: '' };
     const fuelPart = parts.fueltank || { extracted: {}, raw: '' };
     const frontTirePart = parts.wheels_front || { extracted: {}, raw: '' };
