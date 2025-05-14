@@ -48,7 +48,7 @@ The current feature list and planned future features (I'll try to update this in
 🔴Handling ZIPs  
 🔴Sound Injection  
 🔴Handling Formula Entry  
-🔴Power Curve Augmentation?
+🔴Power Curve Augmentation?  
 🔴Multi-car exports?  
 
 ## Installation (Windows)
