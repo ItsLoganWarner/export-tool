@@ -1,8 +1,12 @@
 import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron'; // Updated to include `shell`
 import path from 'node:path';
 import fs from 'fs';
+import os from 'os';
 import { updatePart } from './utils/updateRegistry.js'; // Updated import
 import builtInPresets from './utils/builtInPresets.js'  // Import built-in presets
+
+// where to store settings.json (flat in userData)
+const SETTINGS_FILE = path.join(app.getPath('userData'), 'settings.json');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -34,15 +38,42 @@ app.whenReady().then(() => {
   createWindow();
 
   // Handlers to open dialogs and read folders/files
-  ipcMain.handle('dialog:openDirectory', async () => {
-    const result = await dialog.showOpenDialog({
-      properties: ['openDirectory'],
-    });
+  ipcMain.handle('dialog:openDirectory', async (_evt, defaultPath) => {
+    const opts = { properties: ['openDirectory'] };
+    if (defaultPath) opts.defaultPath = defaultPath;
+    const result = await dialog.showOpenDialog(opts);
     if (!result.canceled) {
       return result.filePaths[0];
     }
     return null;
   });
+
+  // ─── SETTINGS PERSISTENCE ────────────────────────────────────────────────────
+  // load settings.json (or return empty object)
+  ipcMain.handle('settings:get', async () => {
+    try {
+      const raw = await fs.promises.readFile(SETTINGS_FILE, 'utf-8');
+      return JSON.parse(raw);
+    } catch {
+      return {};
+    }
+  });
+
+  // save entire settings object
+  ipcMain.handle('settings:set', async (_evt, newSettings) => {
+    try {
+      await fs.promises.writeFile(
+        SETTINGS_FILE,
+        JSON.stringify(newSettings, null, 2),
+        'utf-8'
+      );
+      return { success: true };
+    } catch (err) {
+      console.error('settings:set error', err);
+      return { success: false, message: err.message };
+    }
+  });
+  // ──────────────────────────────────────────────────────────────────────────────
 
   ipcMain.handle('fs:readDirectory', async (event, directoryPath) => {
     try {

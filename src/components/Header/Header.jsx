@@ -16,6 +16,7 @@ export default function Header({
     onAppendUser,
     onEditMetadata,
     onOpenSettings,
+    defaultExportLocation,
 }) {
     const [open, setOpen] = useState(false);
     const dropdownRef = useRef();
@@ -32,7 +33,7 @@ export default function Header({
     }, []);
 
     const handleSelectDirectory = async () => {
-        const dir = await window.electron.openDirectory();
+        const dir = await window.electron.openDirectory(defaultExportLocation);
         if (!dir) return;
         const data = await loadVehicleData(dir);
         if (!data) return;
@@ -42,7 +43,7 @@ export default function Header({
 
     // ——— Model override (if you added `modelName` to your infoModel.schema) ———
     const defaultModel = vehicleData?.modelName || '';
-    const modelPending = pendingChanges.infoModel?.modelName || '';
+    const modelPending = pendingChanges.infoModel?.modelName;
     let displayModel = modelPending ?? defaultModel;
 
     // ——— Trim & Year override ———

@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header/Header';
 import TabStrip from './components/TabStrip/TabStrip';
 import MetaTab from './components/MetaTab';
@@ -7,11 +7,30 @@ import Footer from './components/Footer/Footer';
 import SettingsTab from './components/SettingsTab';
 
 export default function App() {
+    const [defaultExportLocation, setDefaultExportLocation] = useState('');
+    const [darkMode, setDarkMode] = useState(false);
     const [vehicleData, setVehicleData] = useState(null);
     const [isReady, setIsReady] = useState(false);
     const [pendingChanges, setPendingChanges] = useState({});
     const [isApplied, setIsApplied] = useState(false);
     const [activeView, setActiveView] = useState('General');
+
+    // load settings.json on startup
+    useEffect(() => {
+        window.settings.get().then(s => {
+            if (s.exportPath) setDefaultExportLocation(s.exportPath);
+            if (s.darkMode != null) setDarkMode(s.darkMode);
+        });
+    }, []);
+
+    // save settings.json whenever either piece changes
+    useEffect(() => {
+        window.settings.set({
+            exportPath: defaultExportLocation,
+            darkMode: darkMode,
+        });
+    }, [defaultExportLocation, darkMode]);
+
     const handleOpenSettings = () => setActiveView('Settings');
 
     // 1) Field edits (remove key if null/undefined)
@@ -122,10 +141,15 @@ export default function App() {
                 onAppendUser={handleAppendUser}
                 onEditMetadata={() => setActiveView('Meta')}
                 onOpenSettings={handleOpenSettings}
+                defaultExportLocation={defaultExportLocation}
             />
 
             {activeView === 'Settings' ? (
-                <SettingsTab onExit={() => setActiveView('General')} />
+                <SettingsTab
+                    exportPath={defaultExportLocation}
+                    onExportPathChange={setDefaultExportLocation}
+                    onExit={() => setActiveView('General')}
+                />
             ) : (
                 isReady && vehicleData && (
                     <>
