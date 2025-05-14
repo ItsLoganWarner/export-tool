@@ -25,6 +25,7 @@
 
 - Currently only works on unzipped exports. In the future I hope to add support for zipped.
 - Twincharged engine forced induction values cannot currently be edited, due to the nuances of my current parsing implementation.
+- Does not currently work on multi-car files
 
 ## Planned Future Features
 The current feature list and planned future features (I'll try to update this in order that I plan to do them often as I can)
@@ -48,6 +49,7 @@ The current feature list and planned future features (I'll try to update this in
 🔴Sound Injection  
 🔴Handling Formula Entry  
 🔴Power Curve Augmentation?
+🔴Multi-car exports?  
 
 ## Installation (Windows)
 
