@@ -3,3 +3,136 @@ body {
     Arial, sans-serif;
   margin: auto;
 }
+/* -------------------------------------------
+   Global dark‐mode variable overrides
+   ------------------------------------------- */
+   body.dark-mode {
+    /* page background & text */
+    --bg:              #121212;
+    --text:            #ddd;
+    --text-light:      #aaa;
+  
+    /* sidebar */
+    --sidebar-bg:      #1e1e1e;
+    --sidebar-border:  #333;
+  
+    /* tab‐button active/bg */
+    --primary:         #3a3a3a;
+    --primary-light:   #2a2a2a;
+  }
+  
+  /* now your TabStrip.css will pick these up: */
+  body.dark-mode .app-container {
+    background: var(--bg);
+  }
+  body.dark-mode .sidebar {
+    background: var(--sidebar-bg);
+    border-color: var(--sidebar-border);
+  }
+  body.dark-mode .sidebar-tab {
+    color: var(--text-light);
+  }
+  body.dark-mode .sidebar-tab.active,
+  body.dark-mode .sidebar-tab:hover {
+    background: var(--primary);
+    color: #fff;
+  }
+  body.dark-mode .tab-button {
+    color: var(--text);
+  }
+  body.dark-mode .tab-button.active {
+    background: var(--primary);
+    color: #fff;
+  }
+  /* footer and body background */
+body.dark-mode {
+  background: var(--bg);
+  color: var(--text);
+}
+
+body.dark-mode .footer {
+  background: #1e1e1e;
+  border-top: 1px solid #333;
+  color: var(--text-light);
+}
+/* override the dark‐mode header */
+body.dark-mode .app-header {
+  /* whatever you had originally: */
+  background: linear-gradient(to right, #81C4FF, #16588E, #E7222E);
+  color: white;
+}
+/* ─────────── dark-mode tweaks ─────────── */
+body.dark-mode {
+  /* ensure the page bg & text use your vars */
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* 1) Cards inside every tab panel */
+body.dark-mode .card {
+  background: #1e1e1e !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* 2) TabStrip “content” area background */
+body.dark-mode .app-container,
+body.dark-mode .content {
+  background: var(--bg) !important;
+}
+
+/* 3) Presets button in the header */
+body.dark-mode .app-header .presets-btn {
+  background: #333 !important;
+  color: var(--text-light) !important;
+  border: none;               /* it was borderless anyway */
+}
+body.dark-mode .app-header .presets-btn:hover {
+  background: var(--primary) !important;
+  color: #fff !important;
+}
+
+/* 4) “Edit Metadata” button in header-center */
+body.dark-mode .app-header .edit-meta {
+  background: #333 !important;
+  color: var(--text-light) !important;
+  border: none;
+}
+body.dark-mode .app-header .edit-meta:hover {
+  background: var(--primary) !important;
+  color: #fff !important;
+}
+
+/* 5) Make all header text a bit grayer */
+body.dark-mode .app-header {
+  /* preserve your gradient */
+  background: linear-gradient(to right, #81C4FF, #16588E, #E7222E);
+  /* override the white text */
+  color: var(--text-light) !important;
+}
+
+/* also catch the title line explicitly if needed */
+body.dark-mode .app-header .title-line,
+body.dark-mode .app-header .title-line strong {
+  color: var(--text-light) !important;
+}
+/* ─── Header “Select Car” & Settings buttons ─── */
+body.dark-mode .app-header .settings-btn {
+  /* match the muted header text */
+  color: var(--text-light) !important;
+  border-color: var(--text-light) !important;
+}
+
+body.dark-mode .app-header .select-car:hover,
+body.dark-mode .app-header .settings-btn:hover {
+  background: var(--primary-light) !important;
+  color: #fff !important;
+}
+
+/* ─── Disabled inputs inside cards ─── */
+body.dark-mode .card input[disabled],
+body.dark-mode .card select[disabled] {
+  /* brighten text and give it some contrast */
+  color: var(--text) !important;
+  background: #2a2a2a !important;
+  border-color: #444 !important;
+}
