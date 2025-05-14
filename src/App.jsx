@@ -14,24 +14,37 @@ export default function App() {
     const [pendingChanges, setPendingChanges] = useState({});
     const [isApplied, setIsApplied] = useState(false);
     const [activeView, setActiveView] = useState('General');
+    const [settingsLoaded, setSettingsLoaded] = useState(false);
 
     // load settings.json on startup
     useEffect(() => {
-        window.settings.get().then(s => {
-            if (s.exportPath) setDefaultExportLocation(s.exportPath);
-            if (s.darkMode != null) setDarkMode(s.darkMode);
-        });
+        window.settings.get()
+            .then(s => {
+                if (s.exportPath) setDefaultExportLocation(s.exportPath);
+                if (s.darkMode != null) setDarkMode(s.darkMode);
+            })
+            .finally(() => {
+                // now that we've loaded from disk, allow saves
+                setSettingsLoaded(true);
+            });
     }, []);
 
     // save settings.json whenever either piece changes
     useEffect(() => {
+        // skip initial default-write before load
+        if (!settingsLoaded) return;
+
         window.settings.set({
             exportPath: defaultExportLocation,
             darkMode: darkMode,
         });
-    }, [defaultExportLocation, darkMode]);
+    }, [settingsLoaded, defaultExportLocation, darkMode]);
 
     const handleOpenSettings = () => setActiveView('Settings');
+
+    useEffect(() => {
+        document.body.classList.toggle('dark-mode', darkMode);
+    }, [darkMode]);
 
     // 1) Field edits (remove key if null/undefined)
     const handleFieldChange = (partKey, key, value) => {
@@ -148,6 +161,8 @@ export default function App() {
                 <SettingsTab
                     exportPath={defaultExportLocation}
                     onExportPathChange={setDefaultExportLocation}
+                    darkMode={darkMode}
+                    onDarkModeChange={setDarkMode}
                     onExit={() => setActiveView('General')}
                 />
             ) : (
