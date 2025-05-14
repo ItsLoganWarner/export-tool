@@ -46,7 +46,7 @@ The current feature list and planned future features (I'll try to update this in
 🔴Differential Tab  
 🔴Handling ZIPs  
 🔴Sound Injection
-🔴Handling Formula Entry    
+🔴Handling Formula Entry  
 🔴Power Curve Augmentation?
 
 ## Installation (Windows)
