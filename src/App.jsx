@@ -4,13 +4,15 @@ import Header from './components/Header/Header';
 import TabStrip from './components/TabStrip/TabStrip';
 import MetaTab from './components/MetaTab';
 import Footer from './components/Footer/Footer';
+import SettingsTab from './components/SettingsTab';
 
 export default function App() {
     const [vehicleData, setVehicleData] = useState(null);
     const [isReady, setIsReady] = useState(false);
     const [pendingChanges, setPendingChanges] = useState({});
     const [isApplied, setIsApplied] = useState(false);
-    const [activeView, setActiveView] = useState('General'); // could be 'General', 'Exhaust', or 'Meta'
+    const [activeView, setActiveView] = useState('General');
+    const handleOpenSettings = () => setActiveView('Settings');
 
     // 1) Field edits (remove key if null/undefined)
     const handleFieldChange = (partKey, key, value) => {
@@ -28,7 +30,7 @@ export default function App() {
         for (const [part, changes] of Object.entries(pendingChanges)) {
             if (!Object.keys(changes).length) continue;
             const path = vehicleData.parts[part].filePath;
-            const res = await window.electron.applyChanges(path, part, changes);;
+            const res = await window.electron.applyChanges(path, part, changes);
             if (!res.success) {
                 return alert(`Failed on ${part}: ${res.message}`);
             }
@@ -119,23 +121,24 @@ export default function App() {
                 onLoadUser={handleLoadUser}
                 onAppendUser={handleAppendUser}
                 onEditMetadata={() => setActiveView('Meta')}
+                onOpenSettings={handleOpenSettings}
             />
 
-            {isReady && vehicleData && (
-                <>
-                    {activeView === 'Meta' ? (
-                        // Full-screen Metadata editor for both Model & Trim
-                        <MetaTab
-                            modelExtracted={vehicleData.parts.infoModel.extracted}
-                            modelPending={pendingChanges.infoModel || {}}
-                            trimExtracted={vehicleData.parts.infoTrim.extracted}
-                            trimPending={pendingChanges.infoTrim || {}}
-                            onFieldChange={handleFieldChange}
-                            onExit={() => setActiveView('General')} // ← back to tabs
-                        />
-                    ) : (
-                        // Normal sidebar + content tabs
-                        <>
+            {activeView === 'Settings' ? (
+                <SettingsTab onExit={() => setActiveView('General')} />
+            ) : (
+                isReady && vehicleData && (
+                    <>
+                        {activeView === 'Meta' ? (
+                            <MetaTab
+                                modelExtracted={vehicleData.parts.infoModel.extracted}
+                                modelPending={pendingChanges.infoModel || {}}
+                                trimExtracted={vehicleData.parts.infoTrim.extracted}
+                                trimPending={pendingChanges.infoTrim || {}}
+                                onFieldChange={handleFieldChange}
+                                onExit={() => setActiveView('General')} // ← back to tabs
+                            />
+                        ) : (
                             <TabStrip
                                 parts={vehicleData.parts}
                                 onFieldChange={handleFieldChange}
@@ -143,16 +146,16 @@ export default function App() {
                                 active={activeView} // ← controlled
                                 onTabChange={setActiveView} // ← controlled
                             />
-                        </>
-                    )}
-                    <Footer
-                        onApply={handleApplyChanges}
-                        onRevert={handleRevert}
-                        onSavePreset={handleSavePreset}
-                        onOpenPresetFolder={handleOpenPresetFolder}
-                        isApplied={isApplied}
-                    />
-                </>
+                        )}
+                        <Footer
+                            onApply={handleApplyChanges}
+                            onRevert={handleRevert}
+                            onSavePreset={handleSavePreset}
+                            onOpenPresetFolder={handleOpenPresetFolder}
+                            isApplied={isApplied}
+                        />
+                    </>
+                )
             )}
         </div>
     );

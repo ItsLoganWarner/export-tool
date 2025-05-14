@@ -1,4 +1,4 @@
-// src/components/Tabs/tabs/ExhaustTab.jsx
+// src/components/TabStrip/tabs/ExhaustTab.jsx
 import React, { useState, useEffect } from 'react';
 import exhaustSchema from '../../../schemas/engine/exhaust.schema';
 import "../../../styles/Tabs.css";
