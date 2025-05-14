@@ -38,14 +38,14 @@ The current feature list and planned future features (I'll try to update this in
 🟢Afterfire Tab  
 🟡Forced Induction Tab  
 🟢Fuel Tab  
-🟢Tires Tabs  
+🟡Tires Tabs  
 🟢Settings  
 🟢Dark Mode  
 🟠ESC Tab  
 🔴Transmission Tab  
 🔴Differential Tab  
 🔴Handling ZIPs  
-🔴Sound Injection
+🔴Sound Injection  
 🔴Handling Formula Entry  
 🔴Power Curve Augmentation?
 
