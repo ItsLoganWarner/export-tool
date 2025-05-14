@@ -28,7 +28,7 @@
 
 ## Planned Future Features
 The current feature list and planned future features (I'll try to update this in order that I plan to do them often as I can)
-<p style="text-align: center;">🟢Completed🟡Completed, Need to Revisit🟠In-Progress/Up Next🔴Not Started</p>
+<p style="text-align: center;">🟢Completed🟡Completed, Need to Revisit/Enhance🟠In-Progress/Up Next🔴Not Started</p>
 
 🟢Base UI  
 🟢Built-In Presets  
