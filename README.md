@@ -39,8 +39,8 @@ The current feature list and planned future features (I'll try to update this in
 🟡Forced Induction Tab  
 🟢Fuel Tab  
 🟢Tires Tabs  
-🟠Settings  
-🟠Dark Mode  
+🟢Settings  
+🟢Dark Mode  
 🟠ESC Tab  
 🔴Transmission Tab  
 🔴Differential Tab  
