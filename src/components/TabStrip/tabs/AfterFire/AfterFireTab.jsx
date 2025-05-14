@@ -1,3 +1,4 @@
+// compnents/TabStrip/tabs/AfterFire/AfterFireTab.jsx
 import React, { useState, useEffect } from 'react';
 import afterfireSchema from '../../../../schemas/engine/afterfire.schema';
 import { afterfireSounds } from './afterfireOptions';

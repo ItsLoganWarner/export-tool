@@ -1,4 +1,4 @@
-// src/components/Tabs/tabs/GeneralTab.jsx
+// src/components/TabStrip/tabs/GeneralTab.jsx
 import React, { useState, useEffect } from 'react';
 import generalSchema from '../../../schemas/engine/general.schema';
 import "../../../styles/Tabs.css";

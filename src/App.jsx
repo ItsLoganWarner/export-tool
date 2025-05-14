@@ -1,16 +1,37 @@
 // src/App.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header/Header';
 import TabStrip from './components/TabStrip/TabStrip';
 import MetaTab from './components/MetaTab';
 import Footer from './components/Footer/Footer';
+import SettingsTab from './components/SettingsTab';
 
 export default function App() {
+    const [defaultExportLocation, setDefaultExportLocation] = useState('');
+    const [darkMode, setDarkMode] = useState(false);
     const [vehicleData, setVehicleData] = useState(null);
     const [isReady, setIsReady] = useState(false);
     const [pendingChanges, setPendingChanges] = useState({});
     const [isApplied, setIsApplied] = useState(false);
-    const [activeView, setActiveView] = useState('General'); // could be 'General', 'Exhaust', or 'Meta'
+    const [activeView, setActiveView] = useState('General');
+
+    // load settings.json on startup
+    useEffect(() => {
+        window.settings.get().then(s => {
+            if (s.exportPath) setDefaultExportLocation(s.exportPath);
+            if (s.darkMode != null) setDarkMode(s.darkMode);
+        });
+    }, []);
+
+    // save settings.json whenever either piece changes
+    useEffect(() => {
+        window.settings.set({
+            exportPath: defaultExportLocation,
+            darkMode: darkMode,
+        });
+    }, [defaultExportLocation, darkMode]);
+
+    const handleOpenSettings = () => setActiveView('Settings');
 
     // 1) Field edits (remove key if null/undefined)
     const handleFieldChange = (partKey, key, value) => {
@@ -28,7 +49,7 @@ export default function App() {
         for (const [part, changes] of Object.entries(pendingChanges)) {
             if (!Object.keys(changes).length) continue;
             const path = vehicleData.parts[part].filePath;
-            const res = await window.electron.applyChanges(path, part, changes);;
+            const res = await window.electron.applyChanges(path, part, changes);
             if (!res.success) {
                 return alert(`Failed on ${part}: ${res.message}`);
             }
@@ -113,28 +134,35 @@ export default function App() {
                     setActiveView('General');
                 }}
                 vehicleData={vehicleData}
+                pendingChanges={pendingChanges}
                 onLoadBuiltIn={handleLoadBuiltIn}
                 onAppendBuiltIn={handleAppendBuiltIn}
                 onLoadUser={handleLoadUser}
                 onAppendUser={handleAppendUser}
                 onEditMetadata={() => setActiveView('Meta')}
+                onOpenSettings={handleOpenSettings}
+                defaultExportLocation={defaultExportLocation}
             />
 
-            {isReady && vehicleData && (
-                <>
-                    {activeView === 'Meta' ? (
-                        // Full-screen Metadata editor for both Model & Trim
-                        <MetaTab
-                            modelExtracted={vehicleData.parts.infoModel.extracted}
-                            modelPending={pendingChanges.infoModel || {}}
-                            trimExtracted={vehicleData.parts.infoTrim.extracted}
-                            trimPending={pendingChanges.infoTrim || {}}
-                            onFieldChange={handleFieldChange}
-                            onExit={() => setActiveView('General')} // ← back to tabs
-                        />
-                    ) : (
-                        // Normal sidebar + content tabs
-                        <>
+            {activeView === 'Settings' ? (
+                <SettingsTab
+                    exportPath={defaultExportLocation}
+                    onExportPathChange={setDefaultExportLocation}
+                    onExit={() => setActiveView('General')}
+                />
+            ) : (
+                isReady && vehicleData && (
+                    <>
+                        {activeView === 'Meta' ? (
+                            <MetaTab
+                                modelExtracted={vehicleData.parts.infoModel.extracted}
+                                modelPending={pendingChanges.infoModel || {}}
+                                trimExtracted={vehicleData.parts.infoTrim.extracted}
+                                trimPending={pendingChanges.infoTrim || {}}
+                                onFieldChange={handleFieldChange}
+                                onExit={() => setActiveView('General')} // ← back to tabs
+                            />
+                        ) : (
                             <TabStrip
                                 parts={vehicleData.parts}
                                 onFieldChange={handleFieldChange}
@@ -142,16 +170,16 @@ export default function App() {
                                 active={activeView} // ← controlled
                                 onTabChange={setActiveView} // ← controlled
                             />
-                        </>
-                    )}
-                    <Footer
-                        onApply={handleApplyChanges}
-                        onRevert={handleRevert}
-                        onSavePreset={handleSavePreset}
-                        onOpenPresetFolder={handleOpenPresetFolder}
-                        isApplied={isApplied}
-                    />
-                </>
+                        )}
+                        <Footer
+                            onApply={handleApplyChanges}
+                            onRevert={handleRevert}
+                            onSavePreset={handleSavePreset}
+                            onOpenPresetFolder={handleOpenPresetFolder}
+                            isApplied={isApplied}
+                        />
+                    </>
+                )
             )}
         </div>
     );

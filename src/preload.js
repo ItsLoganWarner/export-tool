@@ -1,7 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('electron', {
-  openDirectory: () => ipcRenderer.invoke('dialog:openDirectory'),
+  openDirectory: (defaultPath) => ipcRenderer.invoke('dialog:openDirectory', defaultPath),
   readDirectory: (directoryPath) => ipcRenderer.invoke('fs:readDirectory', directoryPath),
   readFile: (filePath) => ipcRenderer.invoke('fs:readFile', filePath),
   applyChanges: (filePath, partKey, pendingChanges) =>
@@ -15,4 +15,9 @@ contextBridge.exposeInMainWorld('presets', {
   save:       (data)       => ipcRenderer.invoke('presets:save', data),
   openFolder: () => ipcRenderer.invoke('presets:openFolder'),
   pick:       (which)        => ipcRenderer.invoke('presets:pick', which),
+});
+
+contextBridge.exposeInMainWorld('settings', {
+  get:    () => ipcRenderer.invoke('settings:get'),
+  set:    (settingsObj) => ipcRenderer.invoke('settings:set', settingsObj),
 });

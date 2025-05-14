@@ -1,4 +1,4 @@
-// src/components/Tabs/tabs/FuelTab.jsx
+// src/components/TabStrip/tabs/FuelTab.jsx
 import React, { useState, useEffect } from 'react';
 import fuelSchema from '../../../schemas/engine/fuel.schema';
 import "../../../styles/Tabs.css";

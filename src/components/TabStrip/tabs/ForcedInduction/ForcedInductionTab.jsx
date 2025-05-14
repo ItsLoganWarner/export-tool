@@ -1,4 +1,4 @@
-// src/components/Tabs/tabs/ForcedInductionTab.jsx
+// src/components/TabStrip/tabs/ForcedInduction/ForcedInductionTab.jsx
 import React, { useState, useEffect } from 'react';
 import turboSchema from '../../../../schemas/engine/forcedInduction/turbocharger.schema.js';
 import superSchema from '../../../../schemas/engine/forcedInduction/supercharger.schema.js';

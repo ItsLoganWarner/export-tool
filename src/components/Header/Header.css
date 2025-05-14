@@ -118,7 +118,7 @@
     background: white;
     color: #16588E;
     border: none;
-    padding: 0.4em 0.8em;
+    padding: 0.45em 0.8em; 
     border-radius: 4px;
     font-weight: bold;
     transition: background 0.2s, color 0.2s;
@@ -172,3 +172,28 @@
 .preset-action:hover {
     color: #16588E;
 }
+
+/* Settings button: icon-only, then slide text in from the left */
+.settings-btn {
+    margin-right: 8px;
+    padding: 0.4em;
+    display: inline-flex;
+    align-items: center;
+    transition: padding 0.3s ease;
+  }
+  
+  .settings-btn .label {
+    display: none;
+    margin-right: 0.5em;
+    white-space: nowrap;
+  }
+  
+  /* on hover, grow the left padding to make room, and show the label */
+  .settings-btn:hover {
+    padding: 0.4em 0.4em 0.4em 1em;
+  }
+  
+  .settings-btn:hover .label {
+    display: inline-block;
+  }
+  
