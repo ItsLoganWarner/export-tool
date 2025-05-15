@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import wheelsSchema from '../../../schemas/engine/wheels.schema';
+import wheelsSchema from '../../../schemas/chassis/wheels.schema';
 import "../../../styles/Tabs.css";
 
 

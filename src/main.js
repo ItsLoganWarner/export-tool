@@ -15,9 +15,9 @@ if (require('electron-squirrel-startup')) {
 
 const createWindow = () => {
   const mainWindow = new BrowserWindow({
-    width: 1050,
-    height: 700,
-    minWidth: 800,
+    width: 1080,
+    height: 800,
+    minWidth: 1000,
     minHeight: 620,
     useContentSize: true,
     autoHideMenuBar: true,

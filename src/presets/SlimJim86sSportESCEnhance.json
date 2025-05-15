@@ -1,0 +1,8 @@
+{
+  "esc": {
+    "sport@motorTorqueControl@yawControl.isEnabled": false,
+    "sport@motorTorqueControl@tractionControl.isEnabled": true,
+    "sport@brakeControl@yawControl.isEnabled": true,
+    "sport@brakeControl@tractionControl.isEnabled": false
+  }
+}

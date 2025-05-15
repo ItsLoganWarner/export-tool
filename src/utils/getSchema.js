@@ -5,9 +5,10 @@ import afterfire from '../schemas/engine/afterfire.schema';
 import turbo from '../schemas/engine/forcedInduction/turbocharger.schema';
 import superchrg from '../schemas/engine/forcedInduction/supercharger.schema';
 import fuelSchema from '../schemas/engine/fuel.schema';
-import wheelsSchema from '../schemas/engine/wheels.schema';
+import wheelsSchema from '../schemas/chassis/wheels.schema';
 import infoModelSchema from '../schemas/infoModel.schema';
-import infoTrimSchema  from '../schemas/infoTrim.schema';
+import infoTrimSchema from '../schemas/infoTrim.schema';
+import escTopLevelSchema from '../schemas/esc/topLevel.schema';
 
 // const allSchemas = { general, exhaust, afterfire, turbo, superchrg, fuelSchema };
 
@@ -31,5 +32,11 @@ export function getSchemasForPart(partKey, rawContent) {
     }
     if (normalized === 'infomodel') out.push(infoModelSchema);
     if (normalized === 'infotrim') out.push(infoTrimSchema);
+    if (normalized.includes('camso_dse_drivemodes') &&
+        !normalized.includes('_default_') &&
+        !normalized.includes('_ev_')
+    ) {
+        out.push(escTopLevelSchema);
+    }
     return out;
 }

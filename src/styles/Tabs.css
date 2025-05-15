@@ -1,4 +1,4 @@
-/* src/components/Tabs/Tabs.css */
+
 .field-row {
     position: relative;
     display: flex;
@@ -26,7 +26,45 @@
   .field-row:hover .tooltip {
     opacity: 1;
   }
-  
+
   .field-row .tooltip:empty {
     display: none;
   }
+/* only for ESCTab */
+.esc-card h3 {
+  margin-bottom: 12px;
+}
+
+.esc-fieldset {
+  margin: 16px 0;
+  padding: 12px;
+  border: 1px solid #ccc;
+}
+
+.esc-field-row {
+  display: grid;
+  grid-template-columns: 24px 200px 1fr;
+  column-gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.esc-multi {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.esc-label {
+  font-weight: bold;
+}
+
+/* mode selector */
+.esc-mode-select {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  column-gap: 8px;
+  align-items: center;
+  margin: 12px 0;
+}
+

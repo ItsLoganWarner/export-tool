@@ -6,9 +6,11 @@ export function parsePart(rawContent, filePath) {
   try {
     // if this throws, it’s not valid JSON → go regex route
     JSON.parse(rawContent);
-    // valid JSON! hand off to your JSON parser
-    return parseJsonPart(rawContent) || { extracted: {} };
+    console.log('valid JSON filePath:', filePath);  
+    // pass the filePath (your partKey) into parseJsonPart
+    return parseJsonPart(rawContent, filePath) || { extracted: {} };
   } catch {
+    console.log('invalid JSON filePath:', filePath);
     // invalid JSON → treat as BeamNG .jbeam
     return parseJbeam2(rawContent);
   }
