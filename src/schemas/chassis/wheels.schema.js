@@ -1,4 +1,4 @@
-// src/schemas/wheels.schema.js
+// src/schemas/chassis/wheels.schema.js
 export default {
     fields: {
       hubWidth: {
