@@ -37,6 +37,7 @@ export default function Header({
         if (!dir) return;
         const data = await loadVehicleData(dir);
         if (!data) return;
+        console.log('Loaded vehicle data:', data);
         setVehicleData(data);
         setIsReady(true);
     };

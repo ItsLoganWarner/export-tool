@@ -1,5 +1,5 @@
 // src/utils/loadVehicleData.js
-import { parsePart }   from './parserRegistry';
+import { parsePart } from './parserRegistry';
 import { parseJsonPart } from './jsonParser.js';
 
 export async function loadVehicleData(directoryPath) {
@@ -39,12 +39,12 @@ export async function loadVehicleData(directoryPath) {
     const folderPath = `${vehiclePath}/${folder}`;
     const files = await window.electron.readDirectory(folderPath);
 
-    // —— engine JBEAM (one file) ——
+    // —— engine JBEAM (one file) —— 
     if (folder === engineFolder) {
       const jbeamFile = files.find(f => f.startsWith('camso_engine_') && f.endsWith('.jbeam'));
       if (jbeamFile) {
         const raw = await window.electron.readFile(`${folderPath}/${jbeamFile}`);
-        const parsed = parsePart(raw, jbeamFile);;
+        const parsed = parsePart(raw, jbeamFile);
         if (parsed) {
           parts.engine = {
             fileName: jbeamFile,
@@ -58,7 +58,7 @@ export async function loadVehicleData(directoryPath) {
       continue;
     }
 
-    // —— modelFolder: fuel tank + front & rear wheels ——
+    // —— modelFolder: fuel tank + front & rear wheels —— 
     if (folder === modelFolder) {
       const jbeamFiles = files.filter(f =>
         f.endsWith('.jbeam') &&
@@ -94,27 +94,51 @@ export async function loadVehicleData(directoryPath) {
           extracted: parsed.extracted
         };
       }
+
+      
+      // —— driveModes JSON (ESC) —— 
+      // look for the main Camso_DriveModes_<id>.jbeam
+      const dmFile = files.find(f =>
+        f.startsWith('camso_dse_drivemodes_') &&
+        f.endsWith('.jbeam') &&
+        !f.includes('_default_') &&
+        !f.includes('_ev_')
+      );
+      if (dmFile) {
+        const rawDM = await window.electron.readFile(`${folderPath}/${dmFile}`);
+        const parsedDM = parsePart(rawDM, dmFile);
+        if (parsedDM) {
+          parts.esc = {
+            fileName: dmFile,
+            filePath: `${folderPath}/${dmFile}`,
+            raw: rawDM,
+            parsed: parsedDM,
+            extracted: parsedDM.extracted
+          };
+        }
+      }
     }
   }
-    // ————— Load info.json as “infoModel” —————
-    const infoRaw = await window.electron.readFile(`${vehiclePath}/info.json`);
-    const infoPart = parseJsonPart(infoRaw, 'infoModel');
-    parts.infoModel = {
-      ...infoPart,
-      fileName: 'info.json',
-      filePath: `${vehiclePath}/info.json`
-    };
-  
-    // ————— Load info_<modelFolder>.json as “infoTrim” —————
-    const trimRaw = await window.electron.readFile(
-      `${vehiclePath}/info_${modelFolder}.json`
-    );
-    const trimPart = parseJsonPart(trimRaw, 'infoTrim');
-    parts.infoTrim = {
-      ...trimPart,
-      fileName: `info_${modelFolder}.json`,
-      filePath: `${vehiclePath}/info_${modelFolder}.json`
-    };
+
+  // ————— Load info.json as “infoModel” —————
+  const infoRaw = await window.electron.readFile(`${vehiclePath}/info.json`);
+  const infoPart = parseJsonPart(infoRaw, 'infoModel');
+  parts.infoModel = {
+    ...infoPart,
+    fileName: 'info.json',
+    filePath: `${vehiclePath}/info.json`
+  };
+
+  // ————— Load info_<modelFolder>.json as “infoTrim” —————
+  const trimRaw = await window.electron.readFile(
+    `${vehiclePath}/info_${modelFolder}.json`
+  );
+  const trimPart = parseJsonPart(trimRaw, 'infoTrim');
+  parts.infoTrim = {
+    ...trimPart,
+    fileName: `info_${modelFolder}.json`,
+    filePath: `${vehiclePath}/info_${modelFolder}.json`
+  };
 
   return {
     directoryPath,

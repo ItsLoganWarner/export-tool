@@ -54,11 +54,11 @@ export default function App() {
             else part[key] = value;
             return { ...prev, [partKey]: part };
         });
-        console.log('Pending changes:', pendingChanges);
     };
 
     // 2) Write to disk
     const handleApplyChanges = async () => {
+        console.log('Pending changes:', pendingChanges);
         for (const [part, changes] of Object.entries(pendingChanges)) {
             if (!Object.keys(changes).length) continue;
             const path = vehicleData.parts[part].filePath;
@@ -106,6 +106,7 @@ export default function App() {
 
     // 6) Save the current pendingChanges as a custom preset
     const handleSavePreset = async () => {
+        console.log('Pending changes:', pendingChanges);
         const toSave = { ...pendingChanges };
         const fuelTab = document.querySelector('textarea[name="burnEfficiency"]');
         if (toSave.engine?.burnEfficiency && fuelTab) {

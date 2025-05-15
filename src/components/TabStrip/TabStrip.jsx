@@ -25,6 +25,7 @@ import ForcedInductionTab from './tabs/ForcedInduction/ForcedInductionTab';
 import '../../styles/TabStrip.css';
 import FuelTab from './tabs/FuelTab';
 import TiresTab from './tabs/TiresTab';
+import ESCTab from './tabs/ESCTab'; // Added import for ESCTab
 
 const tabDefinitions = [
     { key: 'General', icon: <PiEngineFill /> },
@@ -113,6 +114,14 @@ export default function TabStrip({
                     extractedData={rearTirePart.extracted}
                     pendingChanges={pendingChanges.wheels_rear || {}}
                     onFieldChange={(key, val) => onFieldChange('wheels_rear', key, val)}
+                />;
+
+            case 'ESC':
+                return <ESCTab
+                    extracted={parts.esc.extracted || {}}
+                    raw={parts.esc?.raw || ''}
+                    pending={pendingChanges.esc || {}}
+                    onFieldChange={onFieldChange}
                 />;
 
             default:
