@@ -98,4 +98,46 @@
     transform: scale(1.2);
     margin-right: 0.5rem;
   }
-  
+  /* ────────────────────────────────────────────────────────────── */
+/*   Scrollbar styling (WebKit + Firefox)                      */
+/* ────────────────────────────────────────────────────────────── */
+
+/* Define light‐mode defaults */
+:root {
+  --scrollbar-bg: #f4f4f4;
+  --scrollbar-thumb: #ccc;
+  --scrollbar-thumb-hover: #999;
+}
+
+/* Override for dark mode */
+body.dark-mode {
+  --scrollbar-bg: #2b2b2b;
+  --scrollbar-thumb: #555;
+  --scrollbar-thumb-hover: #777;
+}
+
+/* WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--scrollbar-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 4px;
+  border: 2px solid var(--scrollbar-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-bg);
+}
