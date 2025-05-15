@@ -42,9 +42,9 @@ The current feature list and planned future features (I'll try to update this in
 🟡Tires Tabs  
 🟢Settings  
 🟢Dark Mode  
-🟠ESC Tab  
-🔴Transmission Tab  
-🔴Differential Tab  
+🟢ESC Tab  
+🟠Transmission Tab  
+🟠Differential Tab  
 🔴Handling ZIPs  
 🔴Sound Injection  
 🔴Handling Formula Entry  
