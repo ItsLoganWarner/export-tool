@@ -116,13 +116,28 @@ export default function TabStrip({
                     onFieldChange={(key, val) => onFieldChange('wheels_rear', key, val)}
                 />;
 
-            case 'ESC':
-                return <ESCTab
-                    extracted={parts.esc.extracted || {}}
-                    raw={parts.esc?.raw || ''}
-                    pending={pendingChanges.esc || {}}
-                    onFieldChange={onFieldChange}
-                />;
+            case 'ESC': {
+                // if there's no ESC part at all, show a simple fallback
+                const escPart = parts.esc;
+                if (!escPart) {
+                    return (
+                        <div className="card">
+                            <h3>ESC / Drive Modes</h3>
+                            <p><em>ESC not detected</em></p>
+                        </div>
+                    );
+                }
+
+                // otherwise safely render the real tab
+                return (
+                    <ESCTab
+                        extracted={escPart.extracted}
+                        raw={escPart.raw}
+                        pending={pendingChanges.esc}
+                        onFieldChange={onFieldChange}
+                    />
+                );
+            }
 
             default:
                 return <div className="card" style={{ fontWeight: 'bold' }}>{active} tab coming soon…</div>;
