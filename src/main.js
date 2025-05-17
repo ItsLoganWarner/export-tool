@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron'; // Updated to include `shell`
+import { app, BrowserWindow, ipcMain, dialog, shell, net } from 'electron';
 import path from 'node:path';
 import fs from 'fs';
 import os from 'os';
@@ -209,6 +209,32 @@ app.whenReady().then(() => {
 
     const raw = await fs.promises.readFile(filePaths[0], 'utf-8');
     return JSON.parse(raw);
+  });
+
+  ipcMain.handle('check-for-update', () => {
+    return new Promise((resolve, reject) => {
+      const req = net.request({
+        method: 'GET',
+        protocol: 'https:',
+        hostname: 'api.github.com',
+        path: '/repos/ItsLoganWarner/exportomation/releases/latest',
+        headers: { 'User-Agent': 'exportomation' }
+      });
+      let body = '';
+      req.on('response', res => {
+        res.on('data', chunk => (body += chunk));
+        res.on('end', () => {
+          try {
+            const tag = JSON.parse(body).tag_name;  // e.g. "v1.4.2"
+            resolve(tag);
+          } catch (err) {
+            reject(err);
+          }
+        });
+      });
+      req.on('error', reject);
+      req.end();
+    });
   });
 
   app.on('activate', () => {
