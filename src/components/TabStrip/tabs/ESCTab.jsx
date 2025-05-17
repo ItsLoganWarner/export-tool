@@ -3,6 +3,7 @@ import React, { useMemo, useState, useEffect } from 'react';
 import '../../../styles/Tabs.css';
 
 export default function ESCTab({
+  extracted = {},
   raw = '',
   pending: pendingChanges = {},
   onFieldChange,       // (partKey, key, value)
